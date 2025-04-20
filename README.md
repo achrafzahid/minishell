@@ -14,9 +14,9 @@ Validated 11/11/2022. Grade: 99%.
 
 ## Usage
 
-Clone the repository with the [minitester](https://github.com/mcombeau/minitester-minishell-tester) submodule:
+Clone the repository :
 ```
-git clone --recurse-submodules git@github.com:mcombeau/minishell.git
+git clone  https://github.com/achrafza/minishell
 ```
 
 To compile:
@@ -32,11 +32,6 @@ To run the program:
 ```
 
 A prompt will appear. You may enter your commands to be executed.
-
-To run the included tester:
-```shell
-cd minitester/ && bash minitester.sh
-```
 
 ## Supported Features
 
@@ -97,4 +92,4 @@ Other useful links:
 * [Austin Tripp's Quick Tutorial on Bash Quotes](https://www.austintripp.ca/blog/2019/07/18/bash-quotes)
 
 ---
-Made by aquesada and mcombeau
+Made by azahid and amabbadi
