@@ -30,7 +30,7 @@ int process_heredoc(t_comm *com, const char *delimiter)
         return (perror("pipe"), 1);
     while (1)
     {
-        line = readline("> "); // Bash-style prompt
+        line = readline("> ");
         if (!line)
             break;
         if (strcmp(line, delimiter) == 0)

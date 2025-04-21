@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 02:09:12 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/17 09:24:24 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/19 08:30:50 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	expander_count(char *wrd, t_env *env)
 {
 	char	var[256] = {0};
 	int		var_len;
-	int		i;
+//	int		i;
 	char	*val;
 	int		len;
 		char status_str[12];
@@ -70,7 +70,7 @@ int	expander_count(char *wrd, t_env *env)
 	if (!wrd || wrd[0] != '$' || !env)
 		return (0);
 	// Parse variable name
-	i = get_var_name(wrd, var, 256, &var_len);
+	get_var_name(wrd, var, 256, &var_len);
 	if (var_len == 0)
 		return (0);
 	// Handle $? specially
@@ -95,7 +95,7 @@ int	is_dquote(char c)
 {
 	return (c == '\"');
 }
-
+//"ls""
 int	has_unbalanced_quotes(char *wrd)
 {
 	int	i = 0, sq = 0, dq;
@@ -105,11 +105,21 @@ int	has_unbalanced_quotes(char *wrd)
 		return (1);
 	while (wrd[i])
 	{
-		if (wrd[i] == '\'')
-			sq++;
-		else if (wrd[i] == '"')
+		if (wrd[i] == '\''){
+      sq++; 
+      i++;
+      while(wrd[i] && wrd[i] != '\'')
+        i++;
+      if(wrd[i]) {sq++;}
+    }
+		else if (wrd[i] == '"'){
 			dq++;
-		i++;
+      i++;
+      while(wrd[i] && wrd[i] != '"')
+        i++;
+      if(wrd[i]) {dq++;}
+    }
+    if (wrd[i]) i++;
 	}
 	return (sq % 2 || dq % 2);
 }
@@ -138,7 +148,7 @@ int	handle_dquotes(const char *wrd, int *i, t_env *env)
 	(*i)++; // Skip opening "
 	while (wrd[*i] && wrd[*i] != '"')
 	{
-		if (wrd[*i] == '$' && wrd[*i + 1])
+		if (wrd[*i] == '$' && wrd[*i + 1] && !ft_isspace(wrd[*i + 1]) && !isquote(wrd[*i + 1]))
 		{
 			count += expander_count((char *)(wrd + *i), env);
 			(*i)++; // Skip $
@@ -200,7 +210,7 @@ int	expand_variable(char *src, t_env *env, char *dest, int *si)
 {
 	char	var[256] = {0};
 	int		var_len;
-	int		i;
+	//int		i;
 	char	*val;
 	int		len;
 
@@ -209,7 +219,7 @@ int	expand_variable(char *src, t_env *env, char *dest, int *si)
 	if (!src || !dest || !env)
 		return (0);
 	// Parse variable name
-	i = get_var_name(src, var, 256, &var_len);
+	get_var_name(src, var, 256, &var_len);
 	if (var_len == 0) // No valid variable
 	{
 		*si += 1; // Skip $
@@ -237,7 +247,7 @@ int	expand_variable(char *src, t_env *env, char *dest, int *si)
 	return (len);
 }
 
-char	*fill_word(char *dest, char *src, t_env *env,int type)
+char	*fill_word(char *dest, char *src, t_env *env,int type,int *flag)
 {
 	int	si;
 	int	di;
@@ -269,16 +279,19 @@ char	*fill_word(char *dest, char *src, t_env *env,int type)
 			si++; // Skip opening "
 			while (src[si] && src[si] != '"')
 			{
-				if (src[si] == '$' && src[si + 1] && type != 2)
+				if (src[si] == '$' && src[si + 1] && !ft_isspace(src[si + 1]) && src[si + 1] != '"' && type != 2)
+        {
 					di += expand_variable(src + si, env, dest + di, &si);
-				else
+        }
+        else
 					dest[di++] = src[si++];
 			}
 			if (src[si])
 				si++;
 		}
-		else if (src[si] == '$' && src[si + 1])
+		else if (src[si] == '$' && src[si + 1]){
 			di += expand_variable(src + si, env, dest + di, &si);
+      (*flag)++;}
 		else
 			dest[di++] = src[si++];
 	}
@@ -291,7 +304,8 @@ char	**parser(char *str, t_env *env,int flag, int type)
 	int countw;
 	char *res;
   char **result;
-
+  int f =  0;
+  flag++;
 	if (!str)
 		return (NULL);
 	if (str[0] == '\0')
@@ -312,8 +326,8 @@ char	**parser(char *str, t_env *env,int flag, int type)
 		printf("bash: cannot allocate memory\n");
 		return (NULL);
 	}
-	res = fill_word(res, str, env,type);
-  if (flag)
+	res = fill_word(res, str, env,type,&f);
+  if (f)
     result = ft_split(res, ' ');
   else
     result = ft_split(res, 0);

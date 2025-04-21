@@ -6,11 +6,12 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 20:18:10 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/16 15:50:57 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/19 13:21:29 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 int	is_redirection(char c)
@@ -23,10 +24,12 @@ int	isquote(char c)
 	return (c == '\'' || c == '\"');
 }
 
+//echo $ HOME" id"
 int	count_checker(char *s)
 {
 	int	i;
 	int	count;
+  char quote;
 
 	i = 0;
 	count = 0;
@@ -43,24 +46,33 @@ int	count_checker(char *s)
 					i++;
 				while (s[i] && !ft_isspace(s[i]) && !is_redirection(s[i]))
 					i++;
-			}
-			else if (s[i] && isquote(s[i]))
+			} //echo ""ls""
+			else if (isquote(s[i]))
 			{
-				i++;
 				count++;
-				while (s[i] && !isquote(s[i]))
-					i++;
-				if (!s[i])
-					// exjt Syntax error
-					return (0);
-				else
-					i++;
+        while(s[i] && (isquote(s[i]) || !ft_isspace(s[i]))){
+          quote = s[i++];
+				  while (s[i] && s[i] != quote)
+					  i++;
+				  if(s[i])
+					  i++;
+        }
 			}
 			else
 			{
 				count++;
 				while (s[i] && !ft_isspace(s[i]) && !is_redirection(s[i]))
-					i++;
+        {
+          if (isquote(s[i]))
+			    {
+            quote = s[i++];
+				    while (s[i] && s[i] != quote)
+					    i++;
+            if (s[i]) i++;
+          }
+          else 
+             i++;
+        }
 			}
 		}
 	}
@@ -70,23 +82,24 @@ int	count_checker(char *s)
 int	ft_wdlen(char *str)
 {
 	int	i;
+  char quote;
 
 	i = 0;
-	if (isquote(str[i]))
-	{
-		i++;
-		while (str[i] && !isquote(str[i]))
-			i++;
-		if (!str[i])
-			return (-1);
-		return (i + 1);
-	}
 	while (str[i] && !ft_isspace(str[i]) && !is_redirection(str[i]))
-		i++;
+  {
+    if (isquote(str[i]))
+		{
+      quote = str[i++];
+			while (str[i] && str[i] != quote)
+				i++;
+        if (str[i]) i++;
+    }
+    else 
+      i++;
+  }
 	return (i);
 }
 
-//"      ls   "     out     "
 char	*alloc_word(char *des, int len, char *src)
 {
 	int	i;
@@ -148,6 +161,8 @@ t_chars	*p_com_split(char *str)
 	if (!str)
 		return (NULL);
 	count = count_checker(str);
+  if (count == 0)
+    return NULL;
 	res = (char **)malloc((count + 1) * sizeof(char *));
 	if (!res)
 		return (NULL);

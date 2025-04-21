@@ -6,7 +6,7 @@
 /*   By: dvrk <dvrk@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 20:43:43 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/15 00:31:43 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/19 08:40:25 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,37 +59,66 @@ void	setup_signals(void)
 	signal(SIGTERM, SIG_IGN);
 }
 
-int	main(int ac, char **av, char *envp[])
+t_env	*initialize_shell(char *envp[])
 {
-	char *input;
-	t_env *env;
-	char *prompt;
-	int status;
+	t_env	*env;
 
-	(void)ac;
-	(void)av;
 	env = env_list_from_array(envp);
 	increment_shlvl(env);
 	setup_signals();
 	read_history("history.txt");
-	while (1337)
-	{
-		prompt = get_prompt();
-		input = readline(prompt);
-		free(prompt);
-		if (!input)
-			break ;
-		if (*input)
-		{
-			add_history(input);
-			parserlexer(input, envp, env);
-		}
-		free(input);
-		if (env)
-			status = env->exit_status;
-	}
+	return (env);
+}
+
+char	*read_shell_input(char *prompt)
+{
+	char	*input;
+
+	input = readline(prompt);
+	if (!input)
+		return (NULL);
+	if (*input)
+		add_history(input);
+	return (input);
+}
+
+void	process_shell_input(char *input, char *envp[], t_env *env)
+{
+	if (*input)
+		parserlexer(input, envp, env);
+}
+
+void	cleanup_shell(t_env *env)
+{
 	free_env(env);
 	write(1, "exit\n", 5);
 	rl_clear_history();
+}
+
+int	main(int ac, char **av, char *envp[])
+{
+	char	*input;
+	t_env	*env;
+	char	*prompt;
+	int		status;
+
+	(void)ac;
+	(void)av;
+	env = initialize_shell(envp);
+	while (1337)
+	{
+		prompt = get_prompt();
+		input = read_shell_input(prompt);
+		free(prompt);
+		if (!input)
+			break ;
+		process_shell_input(input, envp, env);
+		free(input);
+	}
+	if (env)
+		status = env->exit_status;
+	else
+		status = 0;
+	cleanup_shell(env);
 	return (status);
 }

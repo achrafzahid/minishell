@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:51:00 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/17 10:18:09 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/20 16:40:25 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+#include <sys/stat.h>
 # include <unistd.h>
 #include <dirent.h>
 
@@ -135,6 +136,7 @@ int					execute_all(t_comm *coms, char **envp, int size);
 void				increment_shlvl(t_env *env);
 void 				export(char *arg, t_env *env);
 
+void exiter(char **exec);
 
 /*		DEBUGGING		*/
 

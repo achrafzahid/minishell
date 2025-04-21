@@ -36,6 +36,18 @@ int	echo(t_comm *com)
 
 	if (!com || !com->p_com)
 	{
+		if (com->infile != STDIN_FILENO)
+		{
+			struct stat buf;
+			if (fstat(com->infile, &buf) < 0)
+			{
+				if (com->env)
+					com->env->exit_status = 1;
+				if (com->redirections)
+					fprintf(stderr, "%s: No such file or directory\n", com->redirections->str);
+				return (1);
+			}
+		}
 		if (com && com->env)
 			com->env->exit_status = 0;
 		printf("\n");

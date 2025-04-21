@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 03:27:54 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/16 13:42:00 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/20 17:03:39 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,13 @@ char	*find_access(t_comm *com)
 	int		i;
 
 	i = 0;
+  if (com->p_com && ft_strchr(com->p_com->str, '/'))
+  {
+	  if (!access(com->p_com->str, F_OK))
+		  return (ft_strdup(com->p_com->str));
+    return NULL;
+  }
 	sp = parse_envp(com->env);
-	if (!sp && com->p_com && !access(com->p_com->str, F_OK | X_OK))
-		return (ft_strdup(com->p_com->str));
 	while (sp && sp[i] && com->p_com && com->p_com->str)
 	{
 		joinedpath = joined(com->p_com->str, sp[i]);
