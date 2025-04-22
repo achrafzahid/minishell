@@ -6,13 +6,11 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 20:18:10 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/19 13:21:29 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/22 21:28:54 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 int	is_redirection(char c)
 {
@@ -24,7 +22,7 @@ int	isquote(char c)
 	return (c == '\'' || c == '\"');
 }
 
-//echo $ HOME" id"
+//echo > "outer liner bitcher" by
 int	count_checker(char *s)
 {
 	int	i;
@@ -42,10 +40,23 @@ int	count_checker(char *s)
 			if (is_redirection(s[i]))
 			{
 				i++;
+        if (isquote(s[i])){
+          while (s[i] && ft_isspace(s[i]))
+				    i++;  
+          while(s[i] && isquote(s[i])){
+          quote = s[i++];
+				  while (s[i] && s[i] != quote)
+					  i++;
+				  if(s[i])
+					  i++;
+        }
+        }
+        else {
 				while (s[i] && ft_isspace(s[i]))
 					i++;
 				while (s[i] && !ft_isspace(s[i]) && !is_redirection(s[i]))
 					i++;
+        }
 			} //echo ""ls""
 			else if (isquote(s[i]))
 			{
@@ -118,6 +129,7 @@ char	**allocate(char **arr, char *str, int cc)
 	int	i;
 	int	wrdlen;
 	int	j;
+  char quote;
 
 	j = 0;
 	cc += 1 - 1;
@@ -128,11 +140,24 @@ char	**allocate(char **arr, char *str, int cc)
 			i++;
 		if (is_redirection(str[i]))
 		{
-			i++;
+			i++; 
+      while (str[i] && ft_isspace(str[i]))
+				i++; 
+      if (isquote(str[i])){
+      while(str[i] && isquote(str[i])){
+          quote = str[i++];
+				  while (str[i] && str[i] != quote)
+					  i++;
+				  if(str[i])
+					  i++;
+        }
+      }
+      else{
 			while (str[i] && ft_isspace(str[i]))
 				i++;
 			while (str[i] && !ft_isspace(str[i]) && !is_redirection(str[i]))
 				i++;
+      }
 		}
 		else if (str[i])
 		{
@@ -149,7 +174,7 @@ char	**allocate(char **arr, char *str, int cc)
 	arr[j] = NULL;
 	return (arr);
 }
-t_chars	*p_com_split(char *str)
+t_chars	*p_com_split(char *str, t_comm *com)
 {
 	int		count;
 	char	**res;
@@ -161,8 +186,10 @@ t_chars	*p_com_split(char *str)
 	if (!str)
 		return (NULL);
 	count = count_checker(str);
-  if (count == 0)
+  if (count == 0){
+    com->flag +=1;
     return NULL;
+  }
 	res = (char **)malloc((count + 1) * sizeof(char *));
 	if (!res)
 		return (NULL);

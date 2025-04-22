@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:51:00 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/20 16:40:25 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/21 20:03:31 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,13 @@ typedef struct s_commande
 	// env
 	t_env			*env;
 	// last input
+	char 			*raw_input;
 	int				infile;
 	// last output
 	int				outfile;
+
+  //flags when there is something other than red exists
+  int flag;
 }					t_comm;
 
 int					parserlexer(char *input, char **envp, t_env *env);
@@ -112,7 +116,7 @@ void				fill_outputs(t_comm *com);
 int					ft_isspace(char c);
 int					loader(char *str, t_comm *comm, t_env *env);
 int					push_to_list(t_chars **head, char *str, int typ);
-t_chars				*p_com_split(char *str);
+t_chars				*p_com_split(char *str, t_comm *com);
 int					isquote(char c);
 int					is_redirection(char c);
 int					double_array_size(char **str);

@@ -6,7 +6,7 @@
 /*   By: dvrk <dvrk@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 05:02:18 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/20 16:35:51 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/22 22:28:42 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,24 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <unistd.h>
+
+int is_useless_variable(char *raw_input, t_env *env)
+{
+    if (!raw_input || raw_input[0] != '$')
+        return (0);
+
+    char *var_name = raw_input + 1;
+    if (var_name[0] == '?' || var_name[0] == '\0')
+        return (0);
+    t_env *tmp = env;
+    while (tmp)
+    {
+        if (tmp->key && ft_strcmp(tmp->key, var_name) == 0)
+            return (0);
+        tmp = tmp->next;
+    }
+    return (1);
+}
 
 void validate_exit_args(t_comm *com, t_chars *p, int *status)
 {
@@ -119,13 +137,13 @@ int handle_cd(t_comm *com)
     char *path = com->p_com && com->p_com->next ? com->p_com->next->str : NULL;
     if (com->p_com->next && com->p_com->next->next)
     {
-        fprintf(stderr, "too many arguments\n");
+        fprintf(stderr, " too many arguments\n");
         com->env->exit_status = 1;
         return (1);
     }
     int ret = cd(path, com->env);
-    if (ret)
-        fprintf(stderr, "minishell: cd: %s: No such file or directory\n", path ? path : "");
+    /*if (ret)
+        fprintf(stderr, "minishell: cd: %s: No such file or directory\n", path ? path : "");*/
     com->env->exit_status = ret;
     return (ret);
 }
@@ -316,19 +334,30 @@ int handle_child_process(t_comm *coms, int i, int size, int *pipes, char **envp)
     for (int j = 0; j < 2 * (size - 1); j++)
         close(pipes[j]);
     char **exec = list_to_array(coms[i].p_com);
-    if (!exec || !exec[0])
+    if ((!exec || !exec[0]) && !coms->flag)
     {
+        if (is_useless_variable(coms->raw_input, coms[i].env))
+        {
+            free2d(envp);
+            exit(0);
+        }
         perror("minishell");
         if (coms[i].env)
             coms[i].env->exit_status = 127;
         free2d(envp);
         exit(127);
     }
+    else if (coms->flag && (in || out)){
+        free2d(envp);
+        exit (0);
+    }
+
     if (!check_builtin(&coms[i]))
     {
         int ret = exec_builtin(&coms[i]);
         free2d(envp);
-        exit(ret);
+        exit (coms[0].env ? coms[0].env->exit_status : ret);
+        //exit(ret);
     }
     execve(exec[0], exec, envp);
     exiter(exec);
@@ -363,14 +392,6 @@ int execute_all(t_comm *coms, char **envp, int size)
         free2d(envp);
         return (1);
     }
-
-    if (size == 1 && coms[0].p_com && !check_builtin(&coms[0]))
-    {
-        int ret = exec_builtin(&coms[0]);
-        free2d(envp);
-        return (coms[0].env ? coms[0].env->exit_status : ret);
-    }
-
     int pipes[2 * (size - 1)];
     int pids[size];
     if (setup_pipes(pipes, size, coms, envp))

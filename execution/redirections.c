@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 05:52:06 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/17 10:17:45 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/21 21:29:06 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out)
         {
             int fd = open(redir->str, O_RDONLY);
             if (fd == -1)
-                return (perror("minishell"), 1);
+                return (1);
             dup2(fd, 0);
             close(fd);
             *redir_in = 1;

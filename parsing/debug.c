@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 23:54:21 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/16 18:38:24 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/21 20:39:00 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void print_t_comm(t_comm *cmd)
         return;
     printf("\033[1;34m===== Command Info =====\033[0m\n");
     printf("\033[1;32mExit Status: \033[1;33m%d\033[0m\n", cmd->env ? cmd->env->exit_status : -1);
+    printf("\033[1;32mFlag is ->:\033[1;33m%d\033[0m\n",cmd->flag);
     printf("\033[1;32mParsed Command (p_com):\033[0m ");
     s = cmd->p_com;
     if (cmd->p_com)
