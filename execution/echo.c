@@ -44,7 +44,8 @@ int	echo(t_comm *com)
 				if (com->env)
 					com->env->exit_status = 1;
 				if (com->redirections)
-					fprintf(stderr, "%s: No such file or directory\n", com->redirections->str);
+					fprintf(stderr, "%s: No such file or directory\n",
+						com->redirections->str);
 				return (1);
 			}
 		}

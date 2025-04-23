@@ -124,8 +124,8 @@ char				*createargs(t_comm *com);
 int					check_builtin(t_comm *com);
 char				**pipe_split(char *str);
 char				**parser(char *str, t_env *env, int flag, int type);
-int					handle_redirections(t_comm *com, int i, int *redir_in,
-						int *redir_out);
+int		handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char **failed_file, int *printed_error);
+
 t_chars *parse_wildcards(char *wildin, t_comm *com);
 
 /*			Execution			*/

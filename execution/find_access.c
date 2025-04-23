@@ -54,12 +54,12 @@ char	*find_access(t_comm *com)
 	int		i;
 
 	i = 0;
-  if (com->p_com && ft_strchr(com->p_com->str, '/'))
-  {
-	  if (!access(com->p_com->str, F_OK))
-		  return (ft_strdup(com->p_com->str));
-    return NULL;
-  }
+	if (com->p_com && ft_strchr(com->p_com->str, '/'))
+	{
+		if (!access(com->p_com->str, F_OK))
+			return (ft_strdup(com->p_com->str));
+		return (NULL);
+	}
 	sp = parse_envp(com->env);
 	while (sp && sp[i] && com->p_com && com->p_com->str)
 	{

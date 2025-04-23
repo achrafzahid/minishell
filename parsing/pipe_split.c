@@ -43,7 +43,7 @@ int	counter(char *str)
 
 char	**pipe_split(char *str)
 {
-	int		i = 0, start = 0, part;
+	int		i, start, part;
 	int		total;
 	char	**result;
 	char	quote;

@@ -25,8 +25,10 @@ int	unset(t_env **env, char *var)
 
 	while (curr)
 	{
-		if (curr->key && ft_strcmp(curr->key, var) == 0 && (!ft_strcmp(var, "SHELL") || (!ft_strcmp(var, "_")))) //delete shell check after it does not delete in bash just sayiinn
-			break;
+		if (curr->key && ft_strcmp(curr->key, var) == 0 && (!ft_strcmp(var,
+					"SHELL") || (!ft_strcmp(var, "_"))))
+			// delete shell check after it does not delete in bash just sayiinn
+			break ;
 		if (curr->key && ft_strcmp(curr->key, var) == 0)
 		{
 			if (prev)
