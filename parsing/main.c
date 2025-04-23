@@ -40,7 +40,7 @@ char	*get_prompt(void)
 		else
 			last = cwd;
 		snprintf(prompt, sizeof(prompt),
-			"\x1b[1;36m[minishin]: \x1b[35m~%s\x1b[0m ", last);
+			"\001\x1b[1;36m\002[minishin]: \001\x1b[35m~%s\x1b[0m\002 ", last);
 	}
 	else
 		snprintf(prompt, sizeof(prompt), "\x1b[1;32m[minihell]:~ \x1b[0m");
