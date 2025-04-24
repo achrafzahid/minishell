@@ -6,7 +6,7 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 03:27:54 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/20 17:03:39 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/24 22:21:11 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ char	*find_access(t_comm *com)
 		free(joinedpath);
 		i++;
 	}
-	if (com->p_com && !access(com->p_com->str, F_OK | X_OK))
+	if (com->p_com && !access(com->p_com->str, F_OK | X_OK) && !sp)
 	{
 		free2d(sp);
 		return (ft_strdup(com->p_com->str));

@@ -6,7 +6,7 @@
 /*   By: dvrk <dvrk@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 05:02:18 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/22 22:28:42 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/24 22:52:29 by azahid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,11 +455,33 @@ int	execute_all(t_comm *coms, char **envp, int size)
 		return (1);
 	}
 	if (size == 1 && coms[0].p_com && coms[0].p_com->str
-		&& !ft_strcmp(coms[0].p_com->str, "cd") && !coms[0].flag)
+		&& !check_builtin(coms) && !coms[0].flag)
 	{
-		ret = handle_cd(&coms[0]);
-		free2d(envp);
-		return (coms[0].env ? coms[0].env->exit_status : ret);
+  	char	*failed_file;
+	  int		printed_error;
+	    int		in = 0, out = 0;
+    int sin,sout;
+    sin = dup(0);
+    sout = dup(1);
+	  failed_file = NULL;
+	  printed_error = 0;
+	  if (handle_redirections(coms, 0, &in, &out, &failed_file, &printed_error) != 0)
+	  {
+	  	if (!printed_error)
+	  	{
+	  		fprintf(stderr, "minishell: %s: No such file or directory\n", failed_file ? failed_file : "unknown");
+	  	}
+	    if (coms[0].env)
+	  		coms[0].env->exit_status = 1;
+	    free2d(envp);
+		  return(1);
+	  }
+		  ret = exec_builtin(coms);
+      close(0);
+		  free2d(envp);
+      dup2(sin,0);
+      dup2(sout,1);
+		  return (coms[0].env ? coms[0].env->exit_status : ret);
 	}
 	if (setup_pipes(pipes, size, coms, envp))
 		return (1);
