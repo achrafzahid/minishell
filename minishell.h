@@ -13,7 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <libc.h>
+// # include <libc.h>
 # include <ctype.h>
 # include <fcntl.h>
 # include <limits.h>
