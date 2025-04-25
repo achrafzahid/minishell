@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:51:00 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/21 20:03:31 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/25 15:22:47 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <libc.h>
 # include <ctype.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -124,8 +125,8 @@ char				*createargs(t_comm *com);
 int					check_builtin(t_comm *com);
 char				**pipe_split(char *str);
 char				**parser(char *str, t_env *env, int flag, int type);
-int		handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char **failed_file, int *printed_error);
-
+int					handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char **failed_file, int *printed_error);
+int 				is_syntax_error(char *input);
 t_chars *parse_wildcards(char *wildin, t_comm *com);
 
 /*			Execution			*/

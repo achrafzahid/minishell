@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parserlexer.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dvrk <dvrk@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:50:34 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/18 09:32:55 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/25 15:39:10 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@ int	parserlexer(char *input, char **envp, t_env *env)
 	str = pipe_split(input);
 	if (!str)
 		return (-1);
+	if (is_syntax_error(input))
+	{
+		env->exit_status = 2;
+		return (1);
+	}
 	coms = arrayallocator(str, env);
 	if (!coms)
 		return (free2d(str), -1);

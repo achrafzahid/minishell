@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_all.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dvrk <dvrk@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 05:02:18 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/22 22:28:42 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/25 15:39:04 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	validate_exit_args(t_comm *com, t_chars *p, int *status)
 		fprintf(stderr, "minishell: exit: too many arguments\n");
 		if (com->env)
 			com->env->exit_status = 1;
-		exit(1);
+		exit(com->env->exit_status);
 	}
 	i = 0;
 	if (arg[0] == '+' || arg[0] == '-')
@@ -58,8 +58,8 @@ void	validate_exit_args(t_comm *com, t_chars *p, int *status)
 			fprintf(stderr, "minishell: exit: %s: numeric argument required\n",
 				arg);
 			if (com->env)
-				com->env->exit_status = 2;
-			exit(2);
+				com->env->exit_status = 255;
+			exit(com->env->exit_status);
 		}
 		i++;
 	}
@@ -150,12 +150,12 @@ int	handle_cd(t_comm *com)
 	int		ret;
 
 	path = com->p_com && com->p_com->next ? com->p_com->next->str : NULL;
-	if (com->p_com->next && com->p_com->next->next)
+	/*if (com->p_com->next && com->p_com->next->next)
 	{
 		fprintf(stderr, " too many arguments\n");
 		com->env->exit_status = 1;
 		return (1);
-	}
+	}*/
 	ret = cd(path, com->env);
 	/*if (ret)
 		fprintf(stderr, "minishell: cd: %s: No such file or directory\n",
@@ -432,7 +432,7 @@ int wait_for_children(int *pids, int size, t_comm *coms)
         }
         else
         {
-            status = 1; // Non-normal exit
+            status = 1;
         }
         if (coms && coms[0].env)
             coms[0].env->exit_status = status;
@@ -455,12 +455,45 @@ int	execute_all(t_comm *coms, char **envp, int size)
 		return (1);
 	}
 	if (size == 1 && coms[0].p_com && coms[0].p_com->str
-		&& !ft_strcmp(coms[0].p_com->str, "cd") && !coms[0].flag)
+		&& !check_builtin(coms) && !coms[0].flag)
 	{
-		ret = handle_cd(&coms[0]);
+  	char	*failed_file;
+	int		printed_error;
+	int		in = 0, out = 0;
+    int sin,sout;
+    sin = dup(0);
+    sout = dup(1);
+	failed_file = NULL;
+	printed_error = 0;
+
+	
+	int redir_status = handle_redirections(coms, 0, &in, &out, &failed_file, &printed_error);
+	if (redir_status == -1)  
+	{
+		if (!printed_error)
+		{
+			fprintf(stderr, "minishell: %s: No such file or directory\n", failed_file ? failed_file : "unknown");
+		}
+		if (coms[0].env)
+			coms[0].env->exit_status = 1;
 		free2d(envp);
-		return (coms[0].env ? coms[0].env->exit_status : ret);
+		exit(1);  
 	}
+	else if (redir_status != 0)
+	{
+		if (coms[0].env)
+			coms[0].env->exit_status = 1;
+		free2d(envp);
+		return 1;
+	}
+	ret = exec_builtin(coms);
+      close(0);
+		  free2d(envp);
+      dup2(sin,0);
+      dup2(sout,1);
+		  return (coms[0].env ? coms[0].env->exit_status : ret);
+	}
+
 	if (setup_pipes(pipes, size, coms, envp))
 		return (1);
 	for (int i = 0; i < size; i++)

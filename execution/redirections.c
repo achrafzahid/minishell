@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 05:52:06 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/21 21:29:06 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/25 14:30:26 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,15 +79,15 @@ int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char 
 	redir = com[i].redirections;
 	while (redir)
 	{
-		if (redir->type == 0)
-		{
-			fd = open(redir->str, O_RDONLY);
-			if (fd == -1)
-			{
-				*failed_file = redir->str;
-				*printed_error = 0;
-				return (1);
-			}
+        if (redir->type == 0)
+        {
+            fd = open(redir->str, O_RDONLY);
+            if (fd == -1)
+            {
+                *failed_file = redir->str;
+                *printed_error = 0;
+                return (-1);
+            }
 			dup2(fd, 0);
 			close(fd);
 			*redir_in = 1;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 02:05:43 by amabbadi          #+#    #+#             */
-/*   Updated: 2025/04/16 13:52:16 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/25 11:51:18 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	echo(t_comm *com)
 				if (com->redirections)
 					fprintf(stderr, "%s: No such file or directory\n",
 						com->redirections->str);
-				return (1);
+				com->env->exit_status =  127;
 			}
 		}
 		if (com && com->env)

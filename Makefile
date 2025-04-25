@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/16 03:28:20 by amabbadi          #+#    #+#              #
-#    Updated: 2025/04/22 21:29:02 by azahid           ###   ########.fr        #
+#    Updated: 2025/04/25 15:25:41 by amabbadi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g #-DDEBUG #-fsanitize=address  
+CFLAGS = -Wall -Wextra -Werror -g #-DDEBUG -fsanitize=address  
 RM = rm -f
 
 PARSE_DIR = ./parsing
@@ -30,6 +30,7 @@ SRCS = 						$(PARSE_DIR)/arrayallocator.c \
 	$(PARSE_DIR)/pipe_split.c\
 	$(PARSE_DIR)/hollyparser.c\
 	$(PARSE_DIR)/wildcards.c\
+       $(PARSE_DIR)/syntax.c\
        						$(EXEC_DIR)/env.c\
        $(EXEC_DIR)/env_utils.c\
        $(EXEC_DIR)/pwd.c\
