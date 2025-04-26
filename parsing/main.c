@@ -17,6 +17,16 @@
 
 int		g_signal;
 
+int is_void(char *s)
+{
+	while (*s)
+	{
+		if (!isspace(*s))
+			return 0;
+		s++;
+	}
+	return 1;
+}
 void	handle_sigint(int sig)
 {
 	(void)sig;
@@ -115,8 +125,11 @@ int	main(int ac, char **av, char *envp[])
 		prompt = get_prompt();
 		input = read_shell_input(prompt);
 		free(prompt);
+
 		if (!input)
 			break ;
+		if (is_void(input))
+			continue;
 		process_shell_input(input, envp, env);
 		free(input);
 	}
