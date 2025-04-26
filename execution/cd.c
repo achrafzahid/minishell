@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <stdlib.h>
-#include <string.h>
 
 static int update_pwd_env(t_env *e, char *new_dir, int is_err, char *path)
 {
@@ -159,17 +157,41 @@ static int cd_handle_special(char *path, t_env *e, char *prev_dir,
 
 static int cd_change_dir(char *path, char *prev_dir, char *new_dir, t_env *e)
 {
-    int is_err;
-    is_err = 0;
+    int is_err = 0;
+    struct stat path_stat;
+    char logical_path[PATH_MAX];
 
     if (access(path, F_OK) != 0)
         return (perror("cd"), 1);
-    if (chdir(path) != 0)
-        return (perror("cd"), 1);
+
+    if (path[0] == '/')
+        strncpy(logical_path, path, PATH_MAX - 1);
+    else
+    {
+        if (cd_get_current_dir(logical_path, PATH_MAX) != 0)
+            return (1);
+        if (logical_path[strlen(logical_path) - 1] != '/')
+            strncat(logical_path, "/", PATH_MAX - strlen(logical_path) - 1);
+        strncat(logical_path, path, PATH_MAX - strlen(logical_path) - 1);
+    }
+
+    if (lstat(path, &path_stat) == 0 && S_ISLNK(path_stat.st_mode))
+    {
+        if (chdir(path) != 0)
+            return (perror("cd"), 1);
+    }
+    else
+    {
+        if (chdir(path) != 0)
+            return (perror("cd"), 1);
+    }
+
     if (cd_get_current_dir(new_dir, PATH_MAX) != 0)
         is_err = 1;
-    if (update_pwd_env(e, new_dir, is_err, path) != 0)
+
+    if (update_pwd_env(e, logical_path, is_err, path) != 0)
         return (1);
+
     strncpy(prev_dir, new_dir, PATH_MAX - 1);
     return (0);
 }
@@ -185,7 +207,6 @@ int cd(char *path, t_env *e)
         return (ret);
     if (cd_change_dir(path, prev_dir, new_dir, e))
     {
-        
         return (1);
     }
     else

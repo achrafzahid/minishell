@@ -58,7 +58,7 @@ void	validate_exit_args(t_comm *com, t_chars *p, int *status)
 			fprintf(stderr, "minishell: exit: %s: numeric argument required\n",
 				arg);
 			if (com->env)
-				com->env->exit_status = 255;
+				com->env->exit_status = 2;
 			exit(com->env->exit_status);
 		}
 		i++;
@@ -150,12 +150,12 @@ int	handle_cd(t_comm *com)
 	int		ret;
 
 	path = com->p_com && com->p_com->next ? com->p_com->next->str : NULL;
-	/*if (com->p_com->next && com->p_com->next->next)
+	if (com->p_com->next && com->p_com->next->next)
 	{
 		fprintf(stderr, " too many arguments\n");
 		com->env->exit_status = 1;
 		return (1);
-	}*/
+	}
 	ret = cd(path, com->env);
 	/*if (ret)
 		fprintf(stderr, "minishell: cd: %s: No such file or directory\n",

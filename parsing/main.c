@@ -114,11 +114,11 @@ int	main(int ac, char **av, char *envp[])
 
 	(void)ac;
 	(void)av;
-	if (!isatty(0))
+	/*if (!isatty(0))
 	{
 		fprintf(stderr, "madirhach bia yakho hhhhhhhhhhhhhh\n");
 		return (1);
-	}
+	}*/
 	env = initialize_shell(envp);
 	while (1337)
 	{
