@@ -14,10 +14,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int update_pwd_env(t_env *e, char *new_dir, int is_err)
+static int update_pwd_env(t_env *e, char *new_dir, int is_err, char *path)
 {
     t_env *current = e;
     t_env *prev = NULL;
+    char *temp;
+    char *temp2;
 
     while (current)
     {
@@ -25,7 +27,16 @@ static int update_pwd_env(t_env *e, char *new_dir, int is_err)
         {
             if (is_err)
             {
-                char *temp = ft_strjoin(current->value, "/..");
+                /*if (path[strlen(path) - 1] == '/')
+                     temp = ft_strjoin(current->value, path);*/
+                    if (current->value[strlen(current->value) - 1] != '/')
+                    {
+                        temp = ft_strjoin(current->value, "/");
+                        temp2 = temp;
+                        temp = ft_strjoin(temp2, path);
+                    }
+                    else
+                        temp = ft_strjoin(current->value, path);
                 free(current->value);
                 current->value = temp;
                 return (1);
@@ -80,7 +91,7 @@ static int cd_get_current_dir(char *new_dir, size_t size)
     return (0);
 }
 
-static int cd_change_to_home(t_env *e, char *prev_dir, char *new_dir, int is_err)
+static int cd_change_to_home(t_env *e, char *prev_dir, char *new_dir, int is_err, char *path)
 {
     (void)is_err;
     while (e)
@@ -94,7 +105,7 @@ static int cd_change_to_home(t_env *e, char *prev_dir, char *new_dir, int is_err
             {
                 return (1);
             }
-            if (update_pwd_env(e, new_dir, 0) != 0)
+            if (update_pwd_env(e, new_dir, 0, path) != 0)
                 return (1);
             if (prev_dir[0] != '\0')
                 strncpy(prev_dir, new_dir, PATH_MAX - 1);
@@ -110,7 +121,7 @@ static int cd_handle_special(char *path, t_env *e, char *prev_dir,
                             char *new_dir)
 {
     if (!path || ft_strcmp(path, "~") == 0)
-        return (cd_change_to_home(e, prev_dir, new_dir, 0));
+        return (cd_change_to_home(e, prev_dir, new_dir, 0 ,path));
     if (ft_strcmp(path, ".") == 0)
         return (0);
     if (ft_strcmp(path, "/") == 0)
@@ -122,7 +133,7 @@ static int cd_handle_special(char *path, t_env *e, char *prev_dir,
             new_dir = ft_strjoin(prev_dir, "/..");
             return (1);
         }
-        if (update_pwd_env(e, new_dir, 0) != 0)
+        if (update_pwd_env(e, new_dir, 0, path) != 0)
             return (1);
         if (prev_dir[0] != '\0')
             strncpy(prev_dir, new_dir, PATH_MAX - 1);
@@ -139,7 +150,7 @@ static int cd_handle_special(char *path, t_env *e, char *prev_dir,
             return (perror("cd"), 1);
         if (cd_get_current_dir(new_dir, PATH_MAX) != 0)
             return (1);
-        if (update_pwd_env(e, new_dir, 0) != 0)
+        if (update_pwd_env(e, new_dir, 0, path) != 0)
             return (1);
         printf("%s\n", prev_dir);
         strncpy(prev_dir, new_dir, PATH_MAX - 1);
@@ -159,7 +170,7 @@ static int cd_change_dir(char *path, char *prev_dir, char *new_dir, t_env *e)
         return (perror("cd"), 1);
     if (cd_get_current_dir(new_dir, PATH_MAX) != 0)
         is_err = 1;
-    if (update_pwd_env(e, new_dir, is_err) != 0)
+    if (update_pwd_env(e, new_dir, is_err, path) != 0)
         return (1);
     strncpy(prev_dir, new_dir, PATH_MAX - 1);
     return (0);
