@@ -27,8 +27,6 @@ static int update_pwd_env(t_env *e, char *new_dir, int is_err, char *path)
         {
             if (is_err)
             {
-                /*if (path[strlen(path) - 1] == '/')
-                     temp = ft_strjoin(current->value, path);*/
                     if (current->value[strlen(current->value) - 1] != '/')
                     {
                         temp = ft_strjoin(current->value, "/");
