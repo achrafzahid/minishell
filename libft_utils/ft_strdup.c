@@ -6,11 +6,12 @@
 /*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 03:35:40 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/16 19:35:05 by azahid           ###   ########.fr       */
+/*   Updated: 2025/04/28 16:58:41 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
 char	*ft_strdup(const char *s1)
 {
 	int		len;
@@ -31,8 +32,6 @@ char	*ft_strdup(const char *s1)
 	str[len] = 0;
 	return (str);
 }
-
-#include "../minishell.h"
 
 char	*ft_strndup(const char *s, size_t n)
 {

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/28 16:53:52 by amabbadi          #+#    #+#             */
+/*   Updated: 2025/04/28 16:57:22 by amabbadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-size_t  ft_strlen(const char *str)
+size_t	ft_strlen(const char *str)
 {
-	int i;
+	int	i;
 
 	if (!str)
 		return (0);
@@ -12,5 +24,5 @@ size_t  ft_strlen(const char *str)
 		str++;
 		i++;
 	}
-    return (i);
+	return (i);
 }
