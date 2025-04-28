@@ -20,36 +20,33 @@ int	is_useless_variable(char *raw_input, t_env *env)
 	return (1);
 }
 
-void	validate_exit_args(t_comm *com, t_chars *p, int *status)
+void validate_exit_args(t_comm *com, t_chars *p, int *status)
 {
 	char	*arg;
-	int		i;
+	int		error;
+	int		val;
 
 	arg = p->str;
 	if (p->next)
 	{
 		fprintf(stderr, "minishell: exit: too many arguments\n");
-		if (com->env)
+		if (com && com->env)
 			com->env->exit_status = 1;
-		exit(com->env->exit_status);
+		exit(com && com->env ? com->env->exit_status : 1);
 	}
-	i = 0;
-	if (arg[0] == '+' || arg[0] == '-')
-		i++;
-	while (arg[i])
+	error = 0;
+	val = ft_atoi_safe(arg, &error);
+	if (error)
 	{
-		if (!isdigit(arg[i]))
-		{
-			fprintf(stderr, "minishell: exit: %s: numeric argument required\n",
-				arg);
-			if (com->env)
-				com->env->exit_status = 2;
-			exit(com->env->exit_status);
-		}
-		i++;
+		fprintf(stderr, "minishell: exit: %s: numeric argument required\n", arg);
+		if (com && com->env)
+			com->env->exit_status = 2;
+		exit(com && com->env ? com->env->exit_status : 2);
 	}
-	*status = atoi(arg);
+	if (status)
+		*status = val;
 }
+
 
 char	*get_next_word(const char *str)
 {

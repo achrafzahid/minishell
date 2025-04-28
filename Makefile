@@ -52,6 +52,7 @@ SRCS = $(PARSE_DIR)/arrayallocator.c \
        $(LIBFT_UTILS)/ft_strnstr.c   \
        $(LIBFT_UTILS)/ft_substr.c    \
        $(LIBFT_UTILS)/ft_strlen.c    \
+       $(LIBFT_UTILS)/ft_atoi_safe.c    \
        $(GLOB_UTILS_DIR)/utils_builtin_handle.c \
        $(GLOB_UTILS_DIR)/utils_comandparser.c   \
        $(GLOB_UTILS_DIR)/utils_env.c            \

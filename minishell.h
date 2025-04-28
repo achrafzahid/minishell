@@ -137,6 +137,8 @@ char				*ft_strnstr(const char *str, const char *tofind,
 char				*ft_substr(char const *s, unsigned int start, size_t len);
 size_t				ft_strlen(const char *str);
 char				*ft_itoa(int n);
+long long 			ft_atoi_safe(char *str, int *error);
+
 // utils_general.c
 int					double_array_size(char **str);
 void				skip_spaces(int *i, char *str);

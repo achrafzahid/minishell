@@ -19,6 +19,7 @@ void	exit_prog(t_comm *com)
 {
 	int		status;
 	t_env	*env;
+	int		exit_code;
 
 	status = 0;
 	env = com ? com->env : NULL;
@@ -26,10 +27,16 @@ void	exit_prog(t_comm *com)
 		status = env->exit_status;
 	if (com && com->p_com && com->p_com->next)
 		validate_exit_args(com, com->p_com->next, &status);
+	exit_code = 1;
+	if (WIFEXITED(status))
+		exit_code = WEXITSTATUS(status);
+	else
+		exit_code = status;
 	if (env)
-		env->exit_status = status;
-	exit(status & 255);
+		env->exit_status = exit_code;
+	exit(exit_code);
 }
+
 
 int	exec_builtin(t_comm *com)
 {
@@ -97,13 +104,13 @@ int	execute_all(t_comm *coms, char **envp, int size)
 	int		pipes[2 * (size - 1)];
 	int		pids[size];
 	int		status;
-	char	*failed_file;
 	int		printed_error;
 	int		in;
 	int		out;
 	int		redir_status;
 	int		sin;
 	int		sout;
+	char	*failed_file;
 
 	if (!coms || size <= 0)
 	{

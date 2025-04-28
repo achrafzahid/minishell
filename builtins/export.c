@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   export.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 15:32:19 by amabbadi          #+#    #+#             */
-/*   Updated: 2025/04/28 15:32:19 by amabbadi         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
 static int	is_valid_identifier(const char *key)
@@ -130,7 +118,7 @@ void	export(char *arg, t_env *env)
 	char	*key;
 	int		is_append;
 	t_env	*tmp;
-	char *value;
+	char 	*value;
 
 	key = NULL;
 	value = NULL;
