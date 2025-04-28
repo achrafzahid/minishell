@@ -23,11 +23,11 @@ int	main(int ac, char **av, char *envp[])
 	(void)av;
 	// if (!isatty(0))
 	// {
-	// 	fprintf(stderr, "madirhach bia yakho hhhhhhhhhhhhhh\n");
+	// 	fprintf(stderr, "madirhach bia yakho hh\n");
 	// 	return (1);
 	// }
 	env = initialize_shell(envp);
-	while (1337)
+	while (42)
 	{
 		prompt = get_prompt();
 		input = read_shell_input(prompt);
