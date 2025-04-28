@@ -50,10 +50,13 @@ t_env	*push_env(t_env *head, char **new_env)
 
 t_env	*env_list_from_array(char **env)
 {
-	t_env *head = NULL;
-	t_env *next;
-	int i = 0;
+	t_env	*head;
+	t_env	*next;
+	t_env	*tmp;
+	int		i;
 
+	head = NULL;
+	i = 0;
 	while (env && env[i])
 	{
 		next = create_env_node(env[i]);
@@ -66,7 +69,7 @@ t_env	*env_list_from_array(char **env)
 			head = next;
 		else
 		{
-			t_env *tmp = head;
+			tmp = head;
 			while (tmp->next)
 				tmp = tmp->next;
 			tmp->next = next;

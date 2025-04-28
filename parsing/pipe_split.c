@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-int	counter(char *str)
+static int	counter(char *str)
 {
 	int		i;
 	int		count;
@@ -43,12 +43,12 @@ int	counter(char *str)
 
 char	**pipe_split(char *str)
 {
-	int		i, start, part;
 	int		total;
 	char	**result;
 	char	quote;
 	int		len;
 
+	int i, start, part;
 	i = 0, start = 0, part = 0;
 	total = counter(str);
 	result = malloc((total + 1) * sizeof(char *));

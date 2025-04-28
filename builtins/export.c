@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/28 15:32:19 by amabbadi          #+#    #+#             */
+/*   Updated: 2025/04/28 15:32:19 by amabbadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int	is_valid_identifier(const char *key)
@@ -115,11 +127,13 @@ static void	add_new_var(t_env *env, char *key, char *value, int has_equal)
 
 void	export(char *arg, t_env *env)
 {
-	char	*key = NULL, *value;
+	char	*key;
 	int		is_append;
 	t_env	*tmp;
+	char *value;
 
-	key = NULL, value = NULL;
+	key = NULL;
+	value = NULL;
 	is_append = 0;
 	if (!env)
 	{

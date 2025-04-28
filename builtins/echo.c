@@ -30,15 +30,15 @@ static int	is_n(const char *str)
 
 int	echo(t_comm *com)
 {
-	int no_nl;
-	int first;
-	t_chars *p;
+	int			no_nl;
+	int			first;
+	t_chars		*p;
+	struct stat	buf;
 
 	if (!com || !com->p_com)
 	{
 		if (com->infile != STDIN_FILENO)
 		{
-			struct stat buf;
 			if (fstat(com->infile, &buf) < 0)
 			{
 				if (com->env)
@@ -46,7 +46,7 @@ int	echo(t_comm *com)
 				if (com->redirections)
 					fprintf(stderr, "%s: No such file or directory\n",
 						com->redirections->str);
-				com->env->exit_status =  127;
+				com->env->exit_status = 127;
 			}
 		}
 		if (com && com->env)
@@ -54,16 +54,13 @@ int	echo(t_comm *com)
 		printf("\n");
 		return (0);
 	}
-
 	no_nl = 0;
 	p = com->p_com->next;
-	// Skip all -n flags
 	while (p && p->str && is_n(p->str))
 	{
 		no_nl = 1;
 		p = p->next;
 	}
-
 	first = 1;
 	while (p && p->str)
 	{
@@ -73,7 +70,6 @@ int	echo(t_comm *com)
 		first = 0;
 		p = p->next;
 	}
-
 	if (!no_nl)
 		printf("\n");
 	if (com && com->env)

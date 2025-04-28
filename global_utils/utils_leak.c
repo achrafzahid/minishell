@@ -71,14 +71,13 @@ void	free_commande(t_comm *com)
 	if (com->commande)
 	{
 		if (com->commande->str)
-			free2d(com->commande->str); // assuming this frees char**
+			free2d(com->commande->str);
 		free(com->commande);
 	}
 	if (com->redirections)
 		free_chars(com->redirections);
 	if (com->heardoc)
 		free_chars(com->heardoc);
-	// free(com); <-- Uncomment this only if `com` was malloc'd
 }
 
 void	free_all_commande(t_comm *comms, int size)

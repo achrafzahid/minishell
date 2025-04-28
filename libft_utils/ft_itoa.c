@@ -1,35 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shlvl.c                                            :+:      :+:    :+:   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 15:44:40 by amabbadi          #+#    #+#             */
-/*   Updated: 2025/04/28 15:44:41 by amabbadi         ###   ########.fr       */
+/*   Created: 2025/04/28 16:38:41 by amabbadi          #+#    #+#             */
+/*   Updated: 2025/04/28 16:38:43 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	increment_shlvl(t_env *env)
+static int	count_digits(int n)
 {
-	int		shlvl;
-	char	*tmp;
+	int	count;
 
-	while (env)
+	count = 1;
+	while (n >= 10)
 	{
-		if (env->key && !strcmp(env->key, "SHLVL"))
-		{
-			shlvl = atoi(env->value);
-			shlvl++;
-			tmp = ft_itoa(shlvl);
-			if (!tmp)
-				return ;
-			free(env->value);
-			env->value = tmp;
-			return ;
-		}
-		env = env->next;
+		n /= 10;
+		count++;
 	}
+	return (count);
+}
+
+char	*ft_itoa(int n)
+{
+	char	*str;
+	int		len;
+
+	if (n < 0)
+		return (NULL);
+	len = count_digits(n);
+	str = malloc(len + 1);
+	if (!str)
+		return (NULL);
+	str[len] = 0;
+	while (len--)
+	{
+		str[len] = n % 10 + '0';
+		n /= 10;
+	}
+	return (str);
 }

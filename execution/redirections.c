@@ -19,8 +19,8 @@ int	is_quoted(const char *str)
 	len = strlen(str);
 	if (len < 2)
 		return (0);
-	if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"' && str[len
-			- 1] == '"'))
+	if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"' && str[len \
+				- 1] == '"'))
 		return (1);
 	return (0);
 }
@@ -47,12 +47,13 @@ int	process_heredoc(t_comm *com, const char *delimiter)
 		write(pipefd[1], "\n", 1);
 		free(line);
 	}
-	close(pipefd[1]);        // Close write-end
-	com->infile = pipefd[0]; // Use read-end in dup2(stdin)
+	close(pipefd[1]);
+	com->infile = pipefd[0];
 	return (0);
 }
 
-int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char **failed_file, int *printed_error)
+int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
+		char **failed_file, int *printed_error)
 {
 	t_chars	*redir;
 	int		fd;
@@ -61,7 +62,6 @@ int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char 
 	*redir_out = 0;
 	*failed_file = NULL;
 	*printed_error = 0;
-
 	redir = com[i].redirections;
 	while (redir)
 	{
@@ -70,7 +70,7 @@ int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char 
 			if (process_heredoc(&com[i], redir->str) != 0)
 			{
 				*failed_file = redir->str;
-				*printed_error = 1; 
+				*printed_error = 1;
 				return (perror("minishell"), 1);
 			}
 		}
@@ -79,40 +79,41 @@ int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out, char 
 	redir = com[i].redirections;
 	while (redir)
 	{
-        if (redir->type == 0)
-        {
-            fd = open(redir->str, O_RDONLY);
-            if (fd == -1)
-            {
-                *failed_file = redir->str;
-                *printed_error = 0;
-                return (-1);
-            }
+		if (redir->type == 0)
+		{
+			fd = open(redir->str, O_RDONLY);
+			if (fd == -1)
+			{
+				*failed_file = redir->str;
+				*printed_error = 0;
+				return (-1);
+			}
 			dup2(fd, 0);
 			close(fd);
 			*redir_in = 1;
 		}
-		else if (redir->type == 1) 
+		else if (redir->type == 1)
 		{
 			fd = open(redir->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
 			{
 				*failed_file = redir->str;
-				*printed_error = 1; 
+				*printed_error = 1;
 				return (perror("minishell"), 1);
 			}
 			dup2(fd, 1);
 			close(fd);
 			*redir_out = 1;
 		}
-		else if (redir->type == 3) 
+		else if (redir->type == 3)
 		{
 			fd = open(redir->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd == -1)
 			{
 				*failed_file = redir->str;
-				*printed_error = 1; 
-				fprintf(stderr, "minishell: %s: Permission denied\n", redir->str);
+				*printed_error = 1;
+				fprintf(stderr, "minishell: %s: Permission denied\n",
+					redir->str);
 				return (1);
 			}
 			dup2(fd, 1);
