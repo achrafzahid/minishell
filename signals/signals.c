@@ -12,11 +12,33 @@
 
 #include "../minishell.h"
 
-void	setup_signals(void)
+void	sigint_handler_in_process(int sig)
 {
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
-	signal(SIGTERM, SIG_IGN);
+	(void)sig;
+	printf("\n");
+}
+
+void	sigquit_handler_in_process(int sig)
+{
+	(void)sig;
+	printf("Quit: %d\n", sig);
+}
+
+void	sigint_handler_nonl(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	printf("\n");
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 void	handle_sigquit(int sig)
@@ -24,11 +46,8 @@ void	handle_sigquit(int sig)
 	(void)sig;
 }
 
-void	handle_sigint(int sig)
+void	setup_signals(void)
 {
-	(void)sig;
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, SIG_IGN);
 }

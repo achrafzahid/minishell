@@ -50,9 +50,18 @@ int	handle_unset(t_comm *com)
 
 int	handle_export(t_comm *com)
 {
-	if (com->p_com->next)
-		export(com->p_com->next->str, com->env);
-	else
+	t_chars	*args;
+
+	args = com->p_com->next;
+	if (!args)
 		export(NULL, com->env);
-	return (1);
+	else
+	{
+		while (args)
+		{
+			export(args->str, com->env);
+			args = args->next;
+		}
+	}
+	return (com->env->exit_status);
 }

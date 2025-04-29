@@ -119,6 +119,9 @@ t_chars				*parse_wildcards(char *wildin, t_comm *com);
 // signals.c
 void				handle_sigint(int sig);
 void				handle_sigquit(int sig);
+void				sigint_handler_nonl(int sig);
+void				sigquit_handler_in_process(int sig);
+void				sigint_handler_in_process(int sig);
 void				setup_signals(void);
 
 // libft

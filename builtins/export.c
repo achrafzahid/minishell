@@ -32,8 +32,8 @@ static void	print_env_vars(t_env *env)
 		}
 		tmp = tmp->next;
 	}
-	env->exit_status = 0;
 }
+
 
 static void	parse_export_arg(char *arg, char **key, char **value,
 		int *is_append)
@@ -110,15 +110,15 @@ static void	add_new_var(t_env *env, char *key, char *value, int has_equal)
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new_node;
-	env->exit_status = 0;
 }
+
 
 void	export(char *arg, t_env *env)
 {
 	char	*key;
 	int		is_append;
 	t_env	*tmp;
-	char 	*value;
+	char	*value;
 
 	key = NULL;
 	value = NULL;
@@ -136,8 +136,7 @@ void	export(char *arg, t_env *env)
 	parse_export_arg(arg, &key, &value, &is_append);
 	if (!key || !is_valid_identifier(key))
 	{
-		fprintf(stderr, "minishell: export: `%s': not a valid identifier\n",
-			arg);
+		fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", arg);
 		free(key);
 		free(value);
 		env->exit_status = 1;
@@ -147,12 +146,8 @@ void	export(char *arg, t_env *env)
 	while (tmp)
 	{
 		if (update_existing_var(tmp, key, value, is_append))
-		{
-			env->exit_status = 0;
 			return ;
-		}
 		tmp = tmp->next;
 	}
-	add_new_var(env, key, value, ft_strchr(arg, '=') || ft_strnstr(arg, "+=",
-			ft_strlen(arg)));
+	add_new_var(env, key, value, ft_strchr(arg, '=') || ft_strnstr(arg, "+=", ft_strlen(arg)));
 }
