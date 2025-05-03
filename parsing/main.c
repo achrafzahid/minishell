@@ -12,6 +12,14 @@
 
 #include "../minishell.h"
 
+void	check_tty(void)
+{
+	if (!isatty(0))
+	{
+		fprintf(stderr, "input is not coming from a tty\n");
+		return (exit(1));
+	}
+}
 int	main(int ac, char **av, char *envp[])
 {
 	char	*input;
@@ -21,13 +29,10 @@ int	main(int ac, char **av, char *envp[])
 
 	(void)ac;
 	(void)av;
-	// if (!isatty(0))
-	// {
-	// 	fprintf(stderr, "madirhach bia yakho hh\n");
-	// 	return (1);
-	// }
+	//check_tty();
+
 	env = initialize_shell(envp);
-	while (42)
+	while (1337)
 	{
 		prompt = get_prompt();
 		input = read_shell_input(prompt);

@@ -72,9 +72,7 @@ char	**pipe_split(char *str)
 			start = i;
 		}
 		else
-		{
 			i++;
-		}
 	}
 	len = i - start;
 	result[part++] = ft_strndup(str + start, len);

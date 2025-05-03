@@ -12,7 +12,6 @@
 
 #include "../minishell.h"
 
-// splits each string and stores the variables in the array of structs
 t_comm	*arrayallocator(char **arr, t_env *env)
 {
 	int		i;
@@ -37,7 +36,6 @@ t_comm	*arrayallocator(char **arr, t_env *env)
 			print_t_env(&comms[i]);
 		i++;
 	}
-	// Ensure the last element is properly null-terminated if required
 	memset(&comms[i], 0, sizeof(t_comm));
 	return (comms);
 }

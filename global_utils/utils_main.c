@@ -14,10 +14,10 @@ char	*get_prompt(void)
 		else
 			last = cwd;
 		snprintf(prompt, sizeof(prompt),
-			"\001\x1b[1;36m\002[minishin]: \001\x1b[35m~%s\x1b[0m\002 ", last);
+			"minishell :: ~ %s : ", last);
 	}
 	else
-		snprintf(prompt, sizeof(prompt), "\x1b[1;32m[minihell]:~ \x1b[0m");
+		snprintf(prompt, sizeof(prompt), "minishell :: ");
 	return (strdup(prompt));
 }
 

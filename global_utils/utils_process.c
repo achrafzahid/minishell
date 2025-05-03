@@ -101,6 +101,7 @@ int	wait_for_children(int *pids, int size, t_comm *coms)
 		if (WIFEXITED(status))
 		{
 			status = WEXITSTATUS(status);
+			
 			if (status == 141 && size > 1 && !broken_pipe)
 			{
 				fprintf(stderr, "minishell: Broken pipe\n");

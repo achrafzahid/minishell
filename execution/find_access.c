@@ -12,10 +12,11 @@
 
 #include "../minishell.h"
 
-char	**parse_envp(t_env *e)
+char	**parse_envp(t_env *tm)
 {
 	char	**sp;
-
+	t_env *e;
+	e = tm;
 	while (e)
 	{
 		if (e->key && !ft_strcmp(e->key, "PATH"))
