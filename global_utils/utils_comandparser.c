@@ -6,6 +6,8 @@ int	push_to_list(t_chars **head, char *str, int type)
 	t_chars	*new_node;
 	t_chars	*temp;
 
+	if (!head || !str)
+		return (1);
 	new_node = malloc(sizeof(t_chars));
 	if (!new_node)
 		return (1);
@@ -36,9 +38,10 @@ void	get_full_command(t_comm *com, char *prompt)
 {
 	t_args	*new;
 
-	if (!prompt || !*prompt)
+	if (!com || !prompt || !*prompt)
 	{
-		com->commande = NULL;
+		if (com)
+			com->commande = NULL;
 		return ;
 	}
 	new = malloc(sizeof(t_args));
@@ -55,6 +58,8 @@ void	get_full_command(t_comm *com, char *prompt)
 /* sets all values to zero for no problem in pushing elements */
 void	setter(t_comm *com)
 {
+	if (!com)
+		return;
 	com->commande = NULL;
 	com->p_com = NULL;
 	com->heardoc = NULL;

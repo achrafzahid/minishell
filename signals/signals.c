@@ -15,13 +15,14 @@
 void	sigint_handler_in_process(int sig)
 {
 	(void)sig;
-	printf("\n");
+	write(1, "\n", 1);
 }
 
 void	sigquit_handler_in_process(int sig)
 {
-	(void)sig;
-	printf("Quit: %d\n", sig);
+	char buf[32];
+	int len = snprintf(buf, sizeof(buf), "Quit: %d\n", sig);
+	write(1, buf, len);
 }
 
 void	sigint_handler_nonl(int sig)
@@ -35,7 +36,7 @@ void	sigint_handler_nonl(int sig)
 void	handle_sigint(int sig)
 {
 	(void)sig;
-	printf("\n");
+	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
@@ -50,4 +51,5 @@ void	setup_signals(void)
 {
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);
 }

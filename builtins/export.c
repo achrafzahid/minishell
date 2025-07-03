@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static int	is_valid_identifier(const char *key)
+int	is_valid_identifier(const char *key)
 {
 	int	i;
 
@@ -119,15 +119,14 @@ void	export(char *arg, t_env *env)
 	int		is_append;
 	t_env	*tmp;
 	char	*value;
+	int		invalid;
 
 	key = NULL;
 	value = NULL;
 	is_append = 0;
+	invalid = 0;
 	if (!env)
-	{
-		fprintf(stderr, "minishell: export: environment not initialized\n");
 		return ;
-	}
 	if (!arg || !*arg)
 	{
 		print_env_vars(env);
@@ -137,17 +136,24 @@ void	export(char *arg, t_env *env)
 	if (!key || !is_valid_identifier(key))
 	{
 		fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", arg);
-		free(key);
-		free(value);
-		env->exit_status = 1;
-		return ;
+		invalid = 1;
+		if (key) free(key);
+		if (value) free(value);
+		if (env) env->exit_status = 1;
+		return;
 	}
 	tmp = env;
 	while (tmp)
 	{
 		if (update_existing_var(tmp, key, value, is_append))
-			return ;
+		{
+			if (key) free(key);
+			if (value) free(value);
+			if (env && !invalid) env->exit_status = 0;
+			return;
+		}
 		tmp = tmp->next;
 	}
 	add_new_var(env, key, value, ft_strchr(arg, '=') || ft_strnstr(arg, "+=", ft_strlen(arg)));
+	if (env && !invalid) env->exit_status = 0;
 }

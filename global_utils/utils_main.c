@@ -14,7 +14,7 @@ char	*get_prompt(void)
 		else
 			last = cwd;
 		snprintf(prompt, sizeof(prompt),
-			"minishell :: ~ %s : ", last);
+			"minishell > ~ %s : ", last);
 	}
 	else
 		snprintf(prompt, sizeof(prompt), "minishell :: ");
@@ -55,4 +55,5 @@ void	cleanup_shell(t_env *env)
 	free_env(env);
 	write(1, "exit\n", 5);
 	rl_clear_history();
+	// Close any open file descriptors if needed
 }

@@ -30,6 +30,8 @@ int	process_heredoc(t_comm *com, const char *delimiter)
 {
 	int		pipefd[2];
 	char	*line;
+	void	(*old_sigint)(int) = signal(SIGINT, SIG_DFL);
+	void	(*old_sigquit)(int) = signal(SIGQUIT, SIG_IGN);
 
 	if (pipe(pipefd) == -1)
 		return (perror("pipe"), 1);
@@ -37,11 +39,11 @@ int	process_heredoc(t_comm *com, const char *delimiter)
 	{
 		line = readline("> ");
 		if (!line)
-			break ;
+			break;
 		if (strcmp(line, delimiter) == 0)
 		{
 			free(line);
-			break ;
+			break;
 		}
 		write(pipefd[1], line, strlen(line));
 		write(pipefd[1], "\n", 1);
@@ -49,6 +51,8 @@ int	process_heredoc(t_comm *com, const char *delimiter)
 	}
 	close(pipefd[1]);
 	com->infile = pipefd[0];
+	signal(SIGINT, old_sigint);
+	signal(SIGQUIT, old_sigquit);
 	return (0);
 }
 
@@ -81,6 +85,26 @@ int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
 	{
 		if (redir->type == 0)
 		{
+			if (strchr(redir->str, '*') || strchr(redir->str, '?'))
+			{
+				t_chars *matches = parse_wildcards(redir->str, &com[i]);
+				if (matches && matches->str)
+				{
+					fd = open(matches->str, O_RDONLY);
+					if (fd == -1)
+					{
+						*failed_file = matches->str;
+						*printed_error = 0;
+						return (-1);
+					}
+					dup2(fd, 0);
+					close(fd);
+					*redir_in = 1;
+				}
+				// If no matches, do not error, just skip (bash behavior)
+				redir = redir->next;
+				continue;
+			}
 			fd = open(redir->str, O_RDONLY);
 			if (fd == -1)
 			{
@@ -102,6 +126,7 @@ int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
 				return (perror("minishell"), 1);
 			}
 			dup2(fd, 1);
+			fflush(stdout);
 			close(fd);
 			*redir_out = 1;
 		}

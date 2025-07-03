@@ -16,11 +16,12 @@ void	env(t_comm *cmd)
 {
 	t_env	*env;
 
-	if (!cmd || !cmd->p_com || !cmd->p_com->str)
+	if (!cmd || !cmd->env)
 		return ;
-	if (cmd->p_com->next)
+	if (cmd->p_com && cmd->p_com->next)
 	{
-		printf("env: too many arguments\n");
+		fprintf(stderr, "env: too many arguments\n");
+		cmd->env->exit_status = 1;
 		return ;
 	}
 	env = cmd->env;
@@ -30,4 +31,5 @@ void	env(t_comm *cmd)
 			printf("%s=%s\n", env->key, env->value);
 		env = env->next;
 	}
+	cmd->env->exit_status = 0;
 }

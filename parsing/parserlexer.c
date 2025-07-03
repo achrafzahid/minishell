@@ -25,15 +25,26 @@ int	parserlexer(char *input, char **envp, t_env *env)
 	size = 0;
 	str = pipe_split(input);
 	if (!str)
+	{
+		if (env)
+			env->exit_status = 2;
 		return (-1);
+	}
 	if (is_syntax_error(input))
 	{
-		env->exit_status = 2;
+		free2d(str);
+		if (env)
+			env->exit_status = 2;
 		return (1);
 	}
 	coms = arrayallocator(str, env);
 	if (!coms)
-		return (free2d(str), -1);
+	{
+		free2d(str);
+		if (env)
+			env->exit_status = 2;
+		return (-1);
+	}
 	coms->raw_input = input;
 	size = double_array_size(str);
 	if (coms && coms->env)

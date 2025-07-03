@@ -70,11 +70,14 @@ static int	wild_read_dir(DIR *dir, char *wildin, t_chars **new_nodes,
 {
 	struct dirent	*entry;
 	t_chars			*node;
+	int			pattern_starts_with_dot = (wildin[0] == '.');
 
 	while ((entry = readdir(dir)) != NULL)
 	{
 		if (ft_strcmp(entry->d_name, ".") == 0 || ft_strcmp(entry->d_name,
 				"..") == 0)
+			continue ;
+		if (!pattern_starts_with_dot && entry->d_name[0] == '.')
 			continue ;
 		if (match_pattern(wildin, entry->d_name))
 		{

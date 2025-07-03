@@ -148,6 +148,7 @@ int					double_array_size(char **str);
 void				skip_spaces(int *i, char *str);
 int					ft_isspace(char c);
 int					is_void(char *s);
+int 				is_valid_identifier(const char *key);
 
 // utils_leak.c
 void				free1d(void *array);

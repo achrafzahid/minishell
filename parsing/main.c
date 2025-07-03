@@ -35,12 +35,17 @@ int	main(int ac, char **av, char *envp[])
 	while (1337)
 	{
 		prompt = get_prompt();
+		if (!prompt)
+			break;
 		input = read_shell_input(prompt);
 		free(prompt);
 		if (!input)
-			break ;
+			break;
 		if (is_void(input))
-			continue ;
+		{
+			free(input);
+			continue;
+		}
 		process_shell_input(input, envp, env);
 		free(input);
 	}

@@ -44,14 +44,17 @@ int	handle_unset(t_comm *com)
 		unset(&com->env, p->str);
 		p = p->next;
 	}
-	com->env->exit_status = 0;
+	if (com && com->env)
+		com->env->exit_status = 0;
 	return (0);
 }
 
 int	handle_export(t_comm *com)
 {
 	t_chars	*args;
+	int		any_invalid;
 
+	any_invalid = 0;
 	args = com->p_com->next;
 	if (!args)
 		export(NULL, com->env);
@@ -60,8 +63,11 @@ int	handle_export(t_comm *com)
 		while (args)
 		{
 			export(args->str, com->env);
+			if (com->env->exit_status == 1)
+				any_invalid = 1;
 			args = args->next;
 		}
+		com->env->exit_status = any_invalid;
 	}
 	return (com->env->exit_status);
 }

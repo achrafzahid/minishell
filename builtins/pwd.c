@@ -18,7 +18,10 @@ char	*pwd(void)
 	char	*path;
 
 	if (!getcwd(buff, sizeof(buff)))
+	{
+		perror("minishell: pwd");
 		return (NULL);
+	}
 	path = ft_strdup(buff);
 	if (!path)
 		return (NULL);

@@ -21,6 +21,8 @@ void	increment_shlvl(t_env *env)
 	{
 		if (env->key && !strcmp(env->key, "SHLVL"))
 		{
+			if (!env->value)
+				return ;
 			shlvl = atoi(env->value);
 			shlvl++;
 			tmp = ft_itoa(shlvl);

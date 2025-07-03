@@ -30,23 +30,18 @@ int	count_checker(char *s)
 			if (is_redirection(s[i]))
 			{
 				i++;
+				while (s[i] && ft_isspace(s[i]))
+					i++;
 				if (isquote(s[i]))
 				{
-					while (s[i] && ft_isspace(s[i]))
+					quote = s[i++];
+					while (s[i] && s[i] != quote)
 						i++;
-					while (s[i] && isquote(s[i]))
-					{
-						quote = s[i++];
-						while (s[i] && s[i] != quote)
-							i++;
-						if (s[i])
-							i++;
-					}
+					if (s[i])
+						i++;
 				}
 				else
 				{
-					while (s[i] && ft_isspace(s[i]))
-						i++;
 					while (s[i] && !ft_isspace(s[i]) && !is_redirection(s[i]))
 						i++;
 				}

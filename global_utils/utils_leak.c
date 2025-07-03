@@ -32,20 +32,21 @@ void	free2d(char **arr)
 
 void	free_chars(t_chars *list)
 {
-	t_chars	*tmp;
+	t_chars *tmp;
 
 	while (list)
 	{
 		tmp = list;
 		list = list->next;
-		free(tmp->str);
+		if (tmp->str)
+			free(tmp->str);
 		free(tmp);
 	}
 }
 
 void	free_ints_list(t_ints *head)
 {
-	t_ints	*tmp;
+	t_ints *tmp;
 
 	while (head)
 	{
@@ -57,14 +58,15 @@ void	free_ints_list(t_ints *head)
 
 void	free_commande(t_comm *com)
 {
-	t_chars	*tmp;
+	t_chars *tmp;
 
 	if (!com)
 		return ;
 	while (com->p_com)
 	{
 		tmp = com->p_com->next;
-		free(com->p_com->str);
+		if (com->p_com->str)
+			free(com->p_com->str);
 		free(com->p_com);
 		com->p_com = tmp;
 	}
@@ -82,7 +84,7 @@ void	free_commande(t_comm *com)
 
 void	free_all_commande(t_comm *comms, int size)
 {
-	int	i;
+	int i;
 
 	if (!comms)
 		return ;
@@ -97,13 +99,15 @@ void	free_all_commande(t_comm *comms, int size)
 
 void	free_env(t_env *head)
 {
-	t_env	*tmp;
+	t_env *tmp;
 
 	while (head)
 	{
 		tmp = head->next;
-		free(head->key);
-		free(head->value);
+		if (head->key)
+			free(head->key);
+		if (head->value)
+			free(head->value);
 		free(head);
 		head = tmp;
 	}

@@ -6,13 +6,13 @@
 #    By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/16 03:28:20 by amabbadi          #+#    #+#              #
-#    Updated: 2025/05/02 13:08:16 by amabbadi         ###   ########.fr        #
+#    Updated: 2025/07/02 23:24:36 by amabbadi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g #-DDEBUG -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -g
 RM = rm -f
 
 PARSE_DIR = ./parsing

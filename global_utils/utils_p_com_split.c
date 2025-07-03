@@ -24,12 +24,50 @@ char	*alloc_word(char *des, int len, char *src)
 	return (des);
 }
 
+char *parse_redir_target(const char *str, int *i)
+{
+	char buf[PATH_MAX * 2];
+	int j = 0;
+	while (str[*i] && !ft_isspace(str[*i]) && !is_redirection(str[*i]))
+	{
+		if (isquote(str[*i]))
+		{
+			char quote = str[(*i)++];
+			while (str[*i] && str[*i] != quote)
+				buf[j++] = str[(*i)++];
+			if (str[*i] == quote)
+				(*i)++;
+		}
+		else
+		{
+			buf[j++] = str[(*i)++];
+		}
+	}
+	// Concatenate adjacent quoted/unquoted strings
+	while (str[*i] && !ft_isspace(str[*i]) && !is_redirection(str[*i]))
+	{
+		if (isquote(str[*i]))
+		{
+			char quote = str[(*i)++];
+			while (str[*i] && str[*i] != quote)
+				buf[j++] = str[(*i)++];
+			if (str[*i] == quote)
+				(*i)++;
+		}
+		else
+		{
+			buf[j++] = str[(*i)++];
+		}
+	}
+	buf[j] = 0;
+	return ft_strdup(buf);
+}
+
 char	**allocate(char **arr, char *str, int cc)
 {
 	int		i;
 	int		wrdlen;
 	int		j;
-	char	quote;
 
 	j = 0;
 	cc += 1 - 1;
@@ -40,27 +78,13 @@ char	**allocate(char **arr, char *str, int cc)
 			i++;
 		if (is_redirection(str[i]))
 		{
+			// skip redirection operator
 			i++;
-			while (str[i] && ft_isspace(str[i]))
+			while (ft_isspace(str[i]))
 				i++;
-			if (isquote(str[i]))
-			{
-				while (str[i] && isquote(str[i]))
-				{
-					quote = str[i++];
-					while (str[i] && str[i] != quote)
-						i++;
-					if (str[i])
-						i++;
-				}
-			}
-			else
-			{
-				while (str[i] && ft_isspace(str[i]))
-					i++;
-				while (str[i] && !ft_isspace(str[i]) && !is_redirection(str[i]))
-					i++;
-			}
+			// concatenate adjacent quoted/unquoted strings for target
+			char *target = parse_redir_target(str, &i);
+			if (target) free(target); // always free if not used
 		}
 		else if (str[i])
 		{
