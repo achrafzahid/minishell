@@ -1,156 +1,112 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   redirections.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 05:52:06 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/25 14:30:26 by amabbadi         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
-int	is_quoted(const char *str)
+int process_heredoc(t_comm *com, const char *delimiter)
 {
-	int	len;
+    int pipefd[2];
+    char *line;
+    void (*old_sigint)(int) = signal(SIGINT, SIG_DFL);
+    void (*old_sigquit)(int) = signal(SIGQUIT, SIG_IGN);
 
-	len = strlen(str);
-	if (len < 2)
-		return (0);
-	if ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"' && str[len \
-				- 1] == '"'))
-		return (1);
-	return (0);
+    if (pipe(pipefd) == -1)
+    {
+        perror("minishell: pipe");
+        return 1;
+    }
+
+    while (1)
+    {
+        line = readline("> ");
+        if (!line || !ft_strcmp(line, (char *)delimiter))
+        {
+            free(line);
+            break;
+        }
+        write(pipefd[1], line, ft_strlen(line));
+        write(pipefd[1], "\n", 1);
+        free(line);
+    }
+
+    close(pipefd[1]);
+    com->infile = pipefd[0];
+    signal(SIGINT, old_sigint);
+    signal(SIGQUIT, old_sigquit);
+    return 0;
 }
 
-// Function to process heredoc
-int	process_heredoc(t_comm *com, const char *delimiter)
+int handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
+                        char **failed_file, int *printed_error)
 {
-	int		pipefd[2];
-	char	*line;
-	void	(*old_sigint)(int) = signal(SIGINT, SIG_DFL);
-	void	(*old_sigquit)(int) = signal(SIGQUIT, SIG_IGN);
+    t_chars *redir = com[i].redirections;
+    int fd;
 
-	if (pipe(pipefd) == -1)
-		return (perror("pipe"), 1);
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-			break;
-		if (strcmp(line, delimiter) == 0)
-		{
-			free(line);
-			break;
-		}
-		write(pipefd[1], line, strlen(line));
-		write(pipefd[1], "\n", 1);
-		free(line);
-	}
-	close(pipefd[1]);
-	com->infile = pipefd[0];
-	signal(SIGINT, old_sigint);
-	signal(SIGQUIT, old_sigquit);
-	return (0);
-}
+    *redir_in = 0;
+    *redir_out = 0;
+    *failed_file = NULL;
+    *printed_error = 0;
 
-int	handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
-		char **failed_file, int *printed_error)
-{
-	t_chars	*redir;
-	int		fd;
-
-	*redir_in = 0;
-	*redir_out = 0;
-	*failed_file = NULL;
-	*printed_error = 0;
-	redir = com[i].redirections;
-	while (redir)
-	{
-		if (redir->type == 2)
-		{
-			if (process_heredoc(&com[i], redir->str) != 0)
-			{
-				*failed_file = redir->str;
-				*printed_error = 1;
-				return (perror("minishell"), 1);
-			}
-		}
-		redir = redir->next;
-	}
-	redir = com[i].redirections;
-	while (redir)
-	{
-		if (redir->type == 0)
-		{
-			if (strchr(redir->str, '*') || strchr(redir->str, '?'))
-			{
-				t_chars *matches = parse_wildcards(redir->str, &com[i]);
-				if (matches && matches->str)
-				{
-					fd = open(matches->str, O_RDONLY);
-					if (fd == -1)
-					{
-						*failed_file = matches->str;
-						*printed_error = 0;
-						return (-1);
-					}
-					dup2(fd, 0);
-					close(fd);
-					*redir_in = 1;
-				}
-				// If no matches, do not error, just skip (bash behavior)
-				redir = redir->next;
-				continue;
-			}
-			fd = open(redir->str, O_RDONLY);
-			if (fd == -1)
-			{
-				*failed_file = redir->str;
-				*printed_error = 0;
-				return (-1);
-			}
-			dup2(fd, 0);
-			close(fd);
-			*redir_in = 1;
-		}
-		else if (redir->type == 1)
-		{
-			fd = open(redir->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-			{
-				*failed_file = redir->str;
-				*printed_error = 1;
-				return (perror("minishell"), 1);
-			}
-			dup2(fd, 1);
-			fflush(stdout);
-			close(fd);
-			*redir_out = 1;
-		}
-		else if (redir->type == 3)
-		{
-			fd = open(redir->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd == -1)
-			{
-				*failed_file = redir->str;
-				*printed_error = 1;
-				fprintf(stderr, "minishell: %s: Permission denied\n",
-					redir->str);
-				return (1);
-			}
-			dup2(fd, 1);
-			close(fd);
-			*redir_out = 1;
-		}
-		else if (redir->type == 2)
-		{
-			dup2(com[i].infile, 0);
-			*redir_in = 1;
-		}
-		redir = redir->next;
-	}
-	return (0);
+    while (redir)
+    {
+        if (redir->type == 2) // Heredoc
+        {
+            if (process_heredoc(&com[i], redir->str) != 0)
+            {
+                *failed_file = redir->str;
+                *printed_error = 1;
+                return 1;
+            }
+            dup2(com[i].infile, STDIN_FILENO);
+            *redir_in = 1;
+        }
+        else if (redir->type == 0) // Input redirection
+        {
+            if (ft_strchr(redir->str, '*') || ft_strchr(redir->str, '?'))
+            {
+                t_chars *matches = parse_wildcards(redir->str, &com[i]);
+                if (matches && matches->str)
+                {
+                    fd = open(matches->str, O_RDONLY);
+                    if (fd == -1)
+                    {
+                        *failed_file = matches->str;
+                        *printed_error = 0;
+                        return -1;
+                    }
+                    dup2(fd, STDIN_FILENO);
+                    close(fd);
+                    *redir_in = 1;
+                }
+                free_chars(matches);
+            }
+            else
+            {
+                fd = open(redir->str, O_RDONLY);
+                if (fd == -1)
+                {
+                    *failed_file = redir->str;
+                    *printed_error = 0;
+                    return -1;
+                }
+                dup2(fd, STDIN_FILENO);
+                close(fd);
+                *redir_in = 1;
+            }
+        }
+        else if (redir->type == 1 || redir->type == 3) // Output redirection
+        {
+            int flags = (redir->type == 1) ? O_WRONLY | O_CREAT | O_TRUNC : O_WRONLY | O_CREAT | O_APPEND;
+            fd = open(redir->str, flags, 0644);
+            if (fd == -1)
+            {
+                *failed_file = redir->str;
+                *printed_error = 1;
+                fprintf(stderr, "minishell: %s: Permission denied\n", redir->str);
+                return 1;
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+            *redir_out = 1;
+        }
+        redir = redir->next;
+    }
+    return 0;
 }

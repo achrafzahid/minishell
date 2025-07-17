@@ -1,100 +1,65 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   find_access.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/26 03:27:54 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/24 22:21:11 by azahid           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
 
-char	**parse_envp(t_env *tm)
+static char **parse_env_paths(t_env *env)
 {
-	char	**sp;
-	t_env *e;
-	e = tm;
-	while (e)
-	{
-		if (e->key && !ft_strcmp(e->key, "PATH"))
-		{
-			if (!e->value)
-				return (NULL);
-			sp = ft_split(e->value, ':');
-			if (!sp)
-				return (NULL);
-			return (sp);
-		}
-		e = e->next;
-	}
-	return (NULL);
+    while (env)
+    {
+        if (env->key && !ft_strcmp(env->key, "PATH") && env->value)
+            return ft_split(env->value, ':');
+        env = env->next;
+    }
+    return NULL;
 }
 
-char	*joined(char *commande, char *sp)
+static char *join_path(const char *dir, const char *cmd)
 {
-	char	*com;
-	char	*joinedpath;
-
-	com = ft_strjoin("/", commande);
-	if (!com)
-		return (NULL);
-	joinedpath = ft_strjoin(sp, com);
-	free(com);
-	if (!joinedpath)
-		return (NULL);
-	return (joinedpath);
+    char *slash_cmd = ft_strjoin("/", cmd);
+    if (!slash_cmd)
+        return NULL;
+    char *full_path = ft_strjoin(dir, slash_cmd);
+    free(slash_cmd);
+    return full_path;
 }
 
-char	*find_access(t_comm *com)
+char *find_access(t_comm *com)
 {
-	char	**sp;
-	char	*joinedpath;
-	int		i;
+    if (!com || !com->p_com || !com->p_com->str)
+        return NULL;
 
-	i = 0;
-	if (com->p_com && ft_strchr(com->p_com->str, '/'))
-	{
-		if (!access(com->p_com->str, F_OK))
-			return (ft_strdup(com->p_com->str));
-		return (NULL);
-	}
-	sp = parse_envp(com->env);
-	while (sp && sp[i] && com->p_com && com->p_com->str)
-	{
-		joinedpath = joined(com->p_com->str, sp[i]);
-		if (!joinedpath)
-		{
-			free2d(sp);
-			return (NULL);
-		}
-		if (!access(joinedpath, F_OK | X_OK))
-		{
-			free2d(sp);
-			return (joinedpath);
-		}
-		free(joinedpath);
-		i++;
-	}
-	if (com->p_com && !access(com->p_com->str, F_OK | X_OK) && !sp)
-	{
-		free2d(sp);
-		return (ft_strdup(com->p_com->str));
-	}
-	free2d(sp);
-	return (NULL);
+    char *cmd = com->p_com->str;
+    if (ft_strchr(cmd, '/'))
+        return access(cmd, F_OK) == 0 ? ft_strdup(cmd) : NULL;
+
+    char **paths = parse_env_paths(com->env);
+    if (!paths && access(cmd, F_OK | X_OK) == 0)
+        return ft_strdup(cmd);
+
+    for (int i = 0; paths && paths[i]; i++)
+    {
+        char *full_path = join_path(paths[i], cmd);
+        if (!full_path)
+        {
+            free2d(paths);
+            return NULL;
+        }
+        if (access(full_path, F_OK | X_OK) == 0)
+        {
+            free2d(paths);
+            return full_path;
+        }
+        free(full_path);
+    }
+
+    free2d(paths);
+    return NULL;
 }
 
-char	*createargs(t_comm *com)
+char *createargs(t_comm *com)
 {
-	char	*first;
-
-	first = find_access(com);
-	if (!first)
-		return (NULL);
-	free(com->p_com->str);
-	com->p_com->str = first;
-	return (com->p_com->str);
+    char *path = find_access(com);
+    if (!path)
+        return NULL;
+    free(com->p_com->str);
+    com->p_com->str = path;
+    return path;
 }
