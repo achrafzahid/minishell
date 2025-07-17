@@ -6,7 +6,7 @@
 /*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 16:18:15 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/25 15:42:34 by amabbadi         ###   ########.fr       */
+/*   Updated: 2025/07/17 06:58:29 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	exiter(char **exec)
 	res = ft_strjoin("minishell : ", exec[0]);
 	if (S_ISDIR(sf.st_mode) && ft_strchr(exec[0], '/'))
 	{
-		str = ft_strjoin(res, " : Is a directory\n");
+		str = ft_strjoin(res, " : is a directory\n");
 		free(res);
 		write(2, str, ft_strlen(str));
 		free(str);

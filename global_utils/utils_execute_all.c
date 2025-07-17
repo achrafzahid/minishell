@@ -40,7 +40,7 @@ void validate_exit_args(t_comm *com, t_chars *p, int *status)
 	{
 		fprintf(stderr, "minishell: exit: %s: numeric argument required\n", arg);
 		if (com && com->env)
-			com->env->exit_status = 2;
+			com->env->exit_status = 255;
 		exit(com && com->env ? com->env->exit_status : 2);
 	}
 	if (status)
