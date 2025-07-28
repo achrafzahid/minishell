@@ -77,13 +77,25 @@ char	**allocate(char **arr, char *str, int cc)
 			i++;
 		if (is_redirection(str[i]))
 		{
-			// skip redirection operator
 			i++;
+			if (str[i] && is_redirection(str[i])) // Handle >> or <<
+				i++;
 			while (ft_isspace(str[i]))
 				i++;
-			// concatenate adjacent quoted/unquoted strings for target
-			char *target = parse_redir_target(str, &i);
-			if (target) free(target); // always free if not used
+			// Skip the target of redirection
+			while (str[i] && !ft_isspace(str[i]) && !is_redirection(str[i]))
+			{
+				if (isquote(str[i]))
+				{
+					char quote = str[i++];
+					while (str[i] && str[i] != quote)
+						i++;
+					if (str[i] == quote)
+						i++;
+				}
+				else
+					i++;
+			}
 		}
 		else if (str[i])
 		{
@@ -91,6 +103,8 @@ char	**allocate(char **arr, char *str, int cc)
 			if (wrdlen == -1)
 				return (NULL);
 			arr[j] = (char *)malloc(wrdlen + 1);
+			if (!arr[j])
+				return (NULL);
 			arr[j] = alloc_word(arr[j], wrdlen, str + i);
 			i += wrdlen;
 			j++;

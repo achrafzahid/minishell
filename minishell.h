@@ -6,7 +6,7 @@
 /*   By: amabbadi <amabbadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:51:00 by azahid            #+#    #+#             */
-/*   Updated: 2025/07/28 06:46:19 by amabbadi         ###   ########.fr       */
+/*   Updated: 2025/07/28 07:19:20 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,6 @@ int					parserlexer(char *input, char **envp, t_env *env);
 char				**pipe_split(char *str);
 // syntax.c
 int					is_syntax_error(char *input);
-// wildcards.c
-t_chars				*parse_wildcards(char *wildin, t_comm *com);
-
 // signals.c
 void				handle_sigint(int sig);
 void				handle_sigquit(int sig);

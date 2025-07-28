@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+         #
+#    By: amabbadi <amabbadi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/16 03:28:20 by amabbadi          #+#    #+#              #
-#    Updated: 2025/07/17 03:28:39 by amabbadi         ###   ########.fr        #
+#    Updated: 2025/07/28 07:15:49 by amabbadi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,6 @@ SRCS = $(PARSE_DIR)/arrayallocator.c \
        $(PARSE_DIR)/parserlexer.c    \
        $(PARSE_DIR)/pipe_split.c     \
        $(PARSE_DIR)/syntax.c         \
-       $(PARSE_DIR)/wildcards.c      \
        $(EXEC_DIR)/execute_all.c     \
        $(EXEC_DIR)/find_access.c      \
        $(EXEC_DIR)/redirections.c    \

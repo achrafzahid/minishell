@@ -27,12 +27,14 @@ char *find_access(t_comm *com)
         return NULL;
 
     char *cmd = com->p_com->str;
+    
     if (ft_strchr(cmd, '/'))
-        return access(cmd, F_OK) == 0 ? ft_strdup(cmd) : NULL;
+        return access(cmd, F_OK | X_OK) == 0 ? ft_strdup(cmd) : NULL;
 
     char **paths = parse_env_paths(com->env);
-    if (!paths && access(cmd, F_OK | X_OK) == 0)
-        return ft_strdup(cmd);
+    
+    if (!paths)
+        return NULL;
 
     for (int i = 0; paths && paths[i]; i++)
     {

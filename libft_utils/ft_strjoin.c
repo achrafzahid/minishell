@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azahid <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 03:31:16 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/28 16:59:22 by amabbadi         ###   ########.fr       */
+/*   Updated: 2025/07/28 07:13:39 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	int		j;
 
 	if (!s1 && s2)
-		return ((char *)s2);
+		return (ft_strdup(s2));
 	else if (s1 && !s2)
-		return ((char *)s1);
+		return (ft_strdup(s1));
 	else if (!s1 && !s2)
 		return (NULL);
 	len1 = ft_strlen((char *)s1);

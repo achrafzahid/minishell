@@ -19,19 +19,68 @@ int	is_valid_identifier(const char *key)
 static void	print_env_vars(t_env *env)
 {
 	t_env	*tmp;
+	char	**keys;
+	int		count = 0;
+	int		i, j;
 
+	// Count variables
 	tmp = env;
 	while (tmp)
 	{
 		if (tmp->key)
-		{
-			if (tmp->value)
-				printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
-			else
-				printf("declare -x %s\n", tmp->key);
-		}
+			count++;
 		tmp = tmp->next;
 	}
+
+	if (count == 0)
+		return;
+
+	keys = malloc(sizeof(char *) * count);
+	if (!keys)
+		return;
+
+	// Collect keys
+	tmp = env;
+	i = 0;
+	while (tmp)
+	{
+		if (tmp->key)
+			keys[i++] = tmp->key;
+		tmp = tmp->next;
+	}
+
+	// Simple bubble sort
+	for (i = 0; i < count - 1; i++)
+	{
+		for (j = 0; j < count - i - 1; j++)
+		{
+			if (ft_strcmp(keys[j], keys[j + 1]) > 0)
+			{
+				char *temp = keys[j];
+				keys[j] = keys[j + 1];
+				keys[j + 1] = temp;
+			}
+		}
+	}
+
+	// Print sorted
+	for (i = 0; i < count; i++)
+	{
+		tmp = env;
+		while (tmp)
+		{
+			if (tmp->key && ft_strcmp(tmp->key, keys[i]) == 0)
+			{
+				if (tmp->value)
+					printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
+				else
+					printf("declare -x %s\n", tmp->key);
+				break;
+			}
+			tmp = tmp->next;
+		}
+	}
+	free(keys);
 }
 
 static void	parse_export_arg(char *arg, char **key, char **value, int *is_append)
@@ -103,11 +152,6 @@ static int	update_existing_var(t_env *tmp, char *key, char *value, int is_append
 		{
 			free(tmp->value);
 			tmp->value = value;
-		}
-		else if (!is_append)
-		{
-			// Don't change existing value if no assignment and not append
-			free(value);
 		}
 		return (1);
 	}
