@@ -57,13 +57,34 @@ int	handle_child_process(t_comm *coms, int i, int size, int *pipes, char **envp)
 		{
 			free2d(envp);
 			exit(0);
-		}
+		}		
 		if (strchr(coms->raw_input, '/'))
-			fprintf(stderr, "minishell: %s: No such file or directory\n",
-				exec[0]);
+		{
+			struct stat sf;
+			if (stat(exec[0] ? exec[0] : coms->raw_input, &sf) == -1)
+			{
+				fprintf(stderr, "minishell: %s: No such file or directory\n",
+					exec[0] ? exec[0] : coms->raw_input);
+				if (coms[i].env)
+					coms[i].env->exit_status = 127;
+				free2d(envp);
+				exit(127);
+			}
+			else if (access(exec[0] ? exec[0] : coms->raw_input, X_OK) == -1)
+			{
+				fprintf(stderr, "minishell: %s: Permission denied\n",
+					exec[0] ? exec[0] : coms->raw_input);
+				if (coms[i].env)
+					coms[i].env->exit_status = 126;
+				free2d(envp);
+				exit(126);
+			}
+		}
 		else
+		{
 			fprintf(stderr, "minishell: %s: command not found\n", exec
 				&& exec[0] ? exec[0] : "");
+		}
 		if (coms[i].env)
 			coms[i].env->exit_status = 127;
 		free2d(envp);

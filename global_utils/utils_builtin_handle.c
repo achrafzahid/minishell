@@ -56,26 +56,23 @@ int	handle_unset(t_comm *com)
 int	handle_export(t_comm *com)
 {
 	t_chars	*args;
-	int		original_exit_status;
+	int		any_error = 0;
 
 	args = com->p_com->next;
-	original_exit_status = 0;
 	
 	if (!args)
 	{
 		export(NULL, com->env);
+		return (com->env->exit_status);
 	}
-	else
+	while (args)
 	{
-		while (args)
-		{
-			export(args->str, com->env);
-			if (com->env->exit_status == 1)
-				original_exit_status = 1;
-			args = args->next;
-		}
-		com->env->exit_status = original_exit_status;
+		export(args->str, com->env);
+		if (com->env->exit_status == 1)
+			any_error = 1;
+		args = args->next;
 	}
-	return (com->env->exit_status);
+	com->env->exit_status = any_error;
+	return (any_error);
 }
 

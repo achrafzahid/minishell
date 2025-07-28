@@ -14,11 +14,11 @@ int	is_syntax_error(char *input)
 		fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
 		return (2); 
 	}
-	if (*input == '>' || *input == '<')
-	{
-		fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
-		return (2);
-	}
+	// if (*input == '>' || *input == '<')
+	// {
+	// 	fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
+	// 	return (2);
+	// }
 	while (*input)
 	{
 		if (*input == '\'' && !in_double)
@@ -29,7 +29,7 @@ int	is_syntax_error(char *input)
 		{
 			if (*input == '{')
 			{
-				fprintf(stderr, "minishell: syntax error near unexpected token `{'\n");
+				fprintf(stderr, "minishell: unexpected end of file\n");
 				return (2);
 			}
 			if (*input == '}')
@@ -44,7 +44,7 @@ int	is_syntax_error(char *input)
 					input++;
 				if (!*input)
 				{
-					fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
+					fprintf(stderr, "minishell: syntax error near unexpected token `newline\n");
 					return (2);
 				}
 				if (*input == '|')
@@ -52,11 +52,8 @@ int	is_syntax_error(char *input)
 					fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
 					return (2);
 				}
-				if (*input == '>' || *input == '<')
-				{
-					fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
-					return (2);
-				}
+				// Remove the check for redirections after pipe to allow "| >" syntax
+				// Let execution handle the errors
 				continue;
 			}
 			if (*input == '>' || *input == '<')
@@ -85,11 +82,11 @@ int	is_syntax_error(char *input)
 					fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
 					return (2);
 				}
-				if (*input == '>' || *input == '<')
-				{
-					fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
-					return (2);
-				}
+				// if (*input == '>' || *input == '<')
+				// {
+				// 	fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
+				// 	return (2);
+				// }
 				continue;
 			}
 		}
