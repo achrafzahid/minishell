@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: amabbadi <amabbadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:51:00 by azahid            #+#    #+#             */
-/*   Updated: 2025/07/17 01:26:39 by amabbadi         ###   ########.fr       */
+/*   Updated: 2025/07/28 06:04:57 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # include <unistd.h>
 
 # define DEFAULT_PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+extern volatile sig_atomic_t	g_signal;
 
 /*Debug mode */
 # ifdef DEBUG

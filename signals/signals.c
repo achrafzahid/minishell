@@ -3,40 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: Amine0x0 <Amine0x0@student.1337.ma>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 17:04:49 by amabbadi          #+#    #+#             */
-/*   Updated: 2025/04/28 17:04:50 by amabbadi         ###   ########.fr       */
+/*   Created: 2025/07/28 03:56:05 by Amine0x0          #+#    #+#             */
+/*   Updated: 2025/07/28 03:56:05 by Amine0x0         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	sigint_handler_in_process(int sig)
+void	setup_signals(void)
 {
-	(void)sig;
-	write(1, "\n", 1);
-}
-
-void	sigquit_handler_in_process(int sig)
-{
-	char buf[32];
-	int len = snprintf(buf, sizeof(buf), "Quit: %d\n", sig);
-	write(1, buf, len);
-}
-
-void	sigint_handler_nonl(int sig)
-{
-	(void)sig;
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
 }
 
 void	handle_sigint(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
+	g_signal = SIGINT;
+	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
@@ -45,11 +31,5 @@ void	handle_sigint(int sig)
 void	handle_sigquit(int sig)
 {
 	(void)sig;
-}
-
-void	setup_signals(void)
-{
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
+	// Do nothing - ignore SIGQUIT in interactive mode
 }
