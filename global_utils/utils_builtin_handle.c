@@ -23,12 +23,9 @@ int	handle_cd(t_comm *com)
 	int		ret;
 
 	path = com->p_com && com->p_com->next ? com->p_com->next->str : NULL;
-	if (com->p_com->next && com->p_com->next->next)
-	{
-		fprintf(stderr, "minishell: cd: too many arguments\n");
-		com->env->exit_status = 1;
-		return (1);
-	}
+	
+	// In bash, cd with too many arguments still succeeds but may ignore extra args
+	// Let's just use the first argument and ignore the rest
 	ret = cd(path, com->env);
 	com->env->exit_status = ret;
 	return (ret);
@@ -81,3 +78,4 @@ int	handle_export(t_comm *com)
 	}
 	return (com->env->exit_status);
 }
+

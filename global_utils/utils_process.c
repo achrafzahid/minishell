@@ -34,10 +34,10 @@ int	handle_child_process(t_comm *coms, int i, int size, int *pipes, char **envp)
 	if (handle_redirections(coms, i, &in, &out, &failed_file,
 			&printed_error) != 0)
 	{
-		if (!printed_error)
+		if (!printed_error && failed_file)
 		{
 			fprintf(stderr, "minishell: %s: No such file or directory\n",
-				failed_file ? failed_file : "unknown");
+				failed_file);
 		}
 		if (coms[i].env)
 			coms[i].env->exit_status = 1;

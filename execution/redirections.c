@@ -56,8 +56,8 @@ int handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
             if (fd == -1)
             {
                 *failed_file = redir->str;
-                *printed_error = 0;
-                perror("minishell");
+                *printed_error = 1;
+                fprintf(stderr, "minishell: %s: No such file or directory\n", redir->str);
                 return -1;
             }
             dup2(fd, STDIN_FILENO);
@@ -72,7 +72,7 @@ int handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
             {
                 *failed_file = redir->str;
                 *printed_error = 1;
-                perror("minishell");
+                fprintf(stderr, "minishell: %s: Permission denied\n", redir->str);
                 return 1;
             }
             dup2(fd, STDOUT_FILENO);
@@ -100,7 +100,7 @@ int	setup_redirections(t_comm *com)
 			fd = open(redir->str, O_RDONLY);
 			if (fd == -1)
 			{
-				perror("minishell");
+				fprintf(stderr, "minishell: %s: No such file or directory\n", redir->str);
 				return (1);
 			}
 			dup2(fd, STDIN_FILENO);
@@ -111,7 +111,7 @@ int	setup_redirections(t_comm *com)
 			fd = open(redir->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
 			{
-				perror("minishell");
+				fprintf(stderr, "minishell: %s: Permission denied\n", redir->str);
 				return (1);
 			}
 			dup2(fd, STDOUT_FILENO);
@@ -128,7 +128,7 @@ int	setup_redirections(t_comm *com)
 			fd = open(redir->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd == -1)
 			{
-				perror("minishell");
+				fprintf(stderr, "minishell: %s: Permission denied\n", redir->str);
 				return (1);
 			}
 			dup2(fd, STDOUT_FILENO);

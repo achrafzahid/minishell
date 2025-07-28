@@ -14,6 +14,11 @@ int	is_syntax_error(char *input)
 		fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
 		return (2); 
 	}
+	if (*input == '>' || *input == '<')
+	{
+		fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
+		return (2);
+	}
 	while (*input)
 	{
 		if (*input == '\'' && !in_double)
@@ -37,12 +42,22 @@ int	is_syntax_error(char *input)
 				input++;
 				while (*input == ' ')
 					input++;
-				if (*input == '|' || *input == '\0' || *input == '<')
+				if (!*input)
+				{
+					fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
+					return (2);
+				}
+				if (*input == '|')
 				{
 					fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
 					return (2);
 				}
-				continue ;
+				if (*input == '>' || *input == '<')
+				{
+					fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
+					return (2);
+				}
+				continue;
 			}
 			if (*input == '>' || *input == '<')
 			{
@@ -65,29 +80,24 @@ int	is_syntax_error(char *input)
 					fprintf(stderr, "minishell: syntax error near unexpected token `newline'\n");
 					return (2);
 				}
-				if (*input == '|' || *input == '>' || *input == '<')
+				if (*input == '|')
 				{
-					if (*input == '|' && op == '<')
-					{
-						fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
-						return (2);
-					}
-					if (*input == '>' || *input == '<')
-					{
-						fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
-						return (2);
-					}
+					fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
+					return (2);
+				}
+				if (*input == '>' || *input == '<')
+				{
 					fprintf(stderr, "minishell: syntax error near unexpected token `%c'\n", *input);
 					return (2);
 				}
-				continue ;
+				continue;
 			}
 		}
 		input++;
 	}
 	if (in_single || in_double)
 	{
-		fprintf(stderr, "minishell: syntax error: unclosed quote\n");
+		fprintf(stderr, "minishell: unexpected end of file\n");
 		return (2);
 	}
 	return (0);
