@@ -83,7 +83,7 @@ int handle_redirections(t_comm *com, int i, int *redir_in, int *redir_out,
                 *redir_in = 1;
             }
         }
-        else if (redir->type == 1 || redir->type == 3) // Output redirection
+        else if (redir->type == 1 || redir->type == 3)
         {
             int flags = (redir->type == 1) ? O_WRONLY | O_CREAT | O_TRUNC : O_WRONLY | O_CREAT | O_APPEND;
             fd = open(redir->str, flags, 0644);

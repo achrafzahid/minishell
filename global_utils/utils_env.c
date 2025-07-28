@@ -78,3 +78,4 @@ t_env	*env_list_from_array(char **env)
 	}
 	return (head);
 }
+

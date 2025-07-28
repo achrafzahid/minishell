@@ -21,7 +21,7 @@ int	parserlexer(char *input, char **envp, t_env *env)
 	{
 		free2d(str);
 		if (env)
-			env->exit_status = syntax_error; // Properly propagate syntax error code
+			env->exit_status = syntax_error;
 		return (syntax_error);
 	}
 	

@@ -1,5 +1,37 @@
 #include "../minishell.h"
 
+void	init_oldpwd(t_env **env)
+{
+	t_env	*oldpwd_node;
+	t_env	*current;
+
+	if (!env || !*env)
+		return;
+	
+	current = *env;
+	while (current)
+	{
+		if (current->key && ft_strcmp(current->key, "OLDPWD") == 0)
+			return; 
+		current = current->next;
+	}
+	
+	// Create OLDPWD node
+	oldpwd_node = malloc(sizeof(t_env));
+	if (!oldpwd_node)
+		return;
+	oldpwd_node->key = ft_strdup("OLDPWD");
+	oldpwd_node->value = NULL;
+	oldpwd_node->next = NULL;
+	oldpwd_node->exit_status = 0;
+	
+	// Add to end of env list
+	current = *env;
+	while (current->next)
+		current = current->next;
+	current->next = oldpwd_node;
+}
+
 t_env	*initialize_shell(char **envp)
 {
 	t_env	*env;
@@ -8,6 +40,7 @@ t_env	*initialize_shell(char **envp)
 	if (!env)
 		return (NULL);
 	increment_shlvl(env);
+	init_oldpwd(&env);
 	return (env);
 }
 
@@ -34,12 +67,7 @@ void	process_shell_input(char *input, char **envp, t_env *env)
 	
 	if (!input)
 		return;
-	
-	// Don't pre-check syntax here, let parserlexer handle it properly
 	result = parserlexer(input, envp, env);
-	
-	// The exit status should already be set by parserlexer
-	// Don't override it here
 }
 
 void	cleanup_shell(t_env *env)

@@ -12,7 +12,7 @@ int	is_syntax_error(char *input)
 	if (*input == '|')
 	{
 		fprintf(stderr, "minishell: syntax error near unexpected token `|'\n");
-		return (2); // Return 2 for syntax errors
+		return (2); 
 	}
 	while (*input)
 	{

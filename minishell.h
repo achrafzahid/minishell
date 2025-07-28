@@ -6,7 +6,7 @@
 /*   By: amabbadi <amabbadi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 00:51:00 by azahid            #+#    #+#             */
-/*   Updated: 2025/07/28 06:04:57 by amabbadi         ###   ########.fr       */
+/*   Updated: 2025/07/28 06:46:19 by amabbadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,4 +267,5 @@ char				*pwd(void);
 // unset.c
 int					unset(t_env **env, char *var);
 
+void				init_oldpwd(t_env **env);
 #endif

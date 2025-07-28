@@ -4,7 +4,6 @@ int	handle_pwd(t_comm *com)
 {
 	char	*path;
 
-	// pwd in bash ignores extra arguments and still prints PWD
 	path = pwd();
 	if (!path)
 	{
@@ -27,7 +26,6 @@ int	handle_cd(t_comm *com)
 	if (com->p_com->next && com->p_com->next->next)
 	{
 		fprintf(stderr, "minishell: cd: too many arguments\n");
-		// bash actually returns 1 for cd with too many arguments, not 0
 		com->env->exit_status = 1;
 		return (1);
 	}

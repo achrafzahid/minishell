@@ -43,7 +43,6 @@ char *parse_redir_target(const char *str, int *i)
 			buf[j++] = str[(*i)++];
 		}
 	}
-	// Concatenate adjacent quoted/unquoted strings
 	while (str[*i] && !ft_isspace(str[*i]) && !is_redirection(str[*i]))
 	{
 		if (isquote(str[*i]))
