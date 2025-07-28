@@ -1,26 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parserlexer.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <amabbadi@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/26 00:50:34 by azahid            #+#    #+#             */
-/*   Updated: 2025/04/25 15:39:10 by amabbadi         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
-
-/*still unfinished for now , but sets the whole struct to 0 for future calls ,
-	then fills
-the struct based on their existence . for now the whole 4 args in the struct are filled*/
 
 int	parserlexer(char *input, char **envp, t_env *env)
 {
 	int		size;
 	char	**str;
 	t_comm	*coms;
+	int		syntax_error;
 
 	size = 0;
 	str = pipe_split(input);
@@ -30,13 +15,16 @@ int	parserlexer(char *input, char **envp, t_env *env)
 			env->exit_status = 2;
 		return (-1);
 	}
-	if (is_syntax_error(input))
+	
+	syntax_error = is_syntax_error(input);
+	if (syntax_error)
 	{
 		free2d(str);
 		if (env)
-			env->exit_status = 2;
-		return (1);
+			env->exit_status = syntax_error; // Properly propagate syntax error code
+		return (syntax_error);
 	}
+	
 	coms = arrayallocator(str, env);
 	if (!coms)
 	{

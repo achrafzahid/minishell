@@ -34,56 +34,81 @@ static void	print_env_vars(t_env *env)
 	}
 }
 
-
-static void	parse_export_arg(char *arg, char **key, char **value,
-		int *is_append)
+static void	parse_export_arg(char *arg, char **key, char **value, int *is_append)
 {
 	char	*tosawi;
 	char	*append_pos;
 
+	*key = NULL;
+	*value = NULL;
+	*is_append = 0;
+	
 	tosawi = ft_strchr(arg, '=');
 	append_pos = ft_strnstr(arg, "+=", ft_strlen(arg));
-	if (append_pos)
+	
+	if (append_pos && (!tosawi || append_pos < tosawi))
 	{
 		*is_append = 1;
 		*key = ft_substr(arg, 0, append_pos - arg);
-		*value = ft_strdup(append_pos + 2);
+		if (*key && is_valid_identifier(*key))
+			*value = ft_strdup(append_pos + 2);
+		else
+		{
+			free(*key);
+			*key = NULL;
+		}
 	}
 	else if (tosawi)
 	{
 		*key = ft_substr(arg, 0, tosawi - arg);
-		*value = ft_strdup(tosawi + 1);
+		if (*key && is_valid_identifier(*key))
+			*value = ft_strdup(tosawi + 1);
+		else
+		{
+			free(*key);
+			*key = NULL;
+		}
 	}
 	else
 	{
-		*key = ft_strdup(arg);
-		*value = NULL;
+		if (is_valid_identifier(arg))
+			*key = ft_strdup(arg);
 	}
 }
 
-static int	update_existing_var(t_env *tmp, char *key, char *value,
-		int is_append)
+static int	update_existing_var(t_env *tmp, char *key, char *value, int is_append)
 {
 	char	*new_value;
 
 	if (tmp->key && ft_strcmp(tmp->key, key) == 0)
 	{
-		if (is_append && value && tmp->value)
+		if (is_append && value)
 		{
-			new_value = ft_strjoin(tmp->value, value);
-			if (new_value)
+			if (tmp->value)
 			{
-				free(tmp->value);
-				tmp->value = new_value;
+				new_value = ft_strjoin(tmp->value, value);
+				if (new_value)
+				{
+					free(tmp->value);
+					tmp->value = new_value;
+				}
+				free(value);
 			}
-			free(value);
+			else
+			{
+				tmp->value = value;
+			}
 		}
-		else if (value || tmp->value)
+		else if (value)
 		{
 			free(tmp->value);
-			tmp->value = value ? value : ft_strdup("");
+			tmp->value = value;
 		}
-		free(key);
+		else if (!is_append)
+		{
+			// Don't change existing value if no assignment and not append
+			free(value);
+		}
 		return (1);
 	}
 	return (0);
@@ -100,60 +125,62 @@ static void	add_new_var(t_env *env, char *key, char *value, int has_equal)
 		fprintf(stderr, "minishell: export: cannot allocate memory\n");
 		free(key);
 		free(value);
-		env->exit_status = 1;
 		return ;
 	}
 	new_node->key = key;
 	new_node->value = value ? value : (has_equal ? ft_strdup("") : NULL);
 	new_node->next = NULL;
+	new_node->exit_status = 0;
+	
 	tmp = env;
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new_node;
 }
 
-
 void	export(char *arg, t_env *env)
 {
 	char	*key;
+	char	*value;
 	int		is_append;
 	t_env	*tmp;
-	char	*value;
-	int		invalid;
+	int		has_equal;
+	int		found;
 
-	key = NULL;
-	value = NULL;
-	is_append = 0;
-	invalid = 0;
 	if (!env)
 		return ;
 	if (!arg || !*arg)
 	{
 		print_env_vars(env);
+		env->exit_status = 0;
 		return ;
 	}
+
 	parse_export_arg(arg, &key, &value, &is_append);
-	if (!key || !is_valid_identifier(key))
+	has_equal = ft_strchr(arg, '=') != NULL;
+	
+	if (!key)
 	{
 		fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", arg);
-		invalid = 1;
-		if (key) free(key);
-		if (value) free(value);
-		if (env) env->exit_status = 1;
-		return;
+		env->exit_status = 1;
+		return ;
 	}
+
+	found = 0;
 	tmp = env;
 	while (tmp)
 	{
 		if (update_existing_var(tmp, key, value, is_append))
 		{
-			if (key) free(key);
-			if (value) free(value);
-			if (env && !invalid) env->exit_status = 0;
-			return;
+			found = 1;
+			free(key);
+			break;
 		}
 		tmp = tmp->next;
 	}
-	add_new_var(env, key, value, ft_strchr(arg, '=') || ft_strnstr(arg, "+=", ft_strlen(arg)));
-	if (env && !invalid) env->exit_status = 0;
+
+	if (!found)
+		add_new_var(env, key, value, has_equal);
+	
+	env->exit_status = 0;
 }

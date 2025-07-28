@@ -30,9 +30,16 @@ char	*read_shell_input(char *prompt)
 
 void	process_shell_input(char *input, char **envp, t_env *env)
 {
-	if (!input || is_syntax_error(input))
-		return ;
-	parserlexer(input, envp, env);
+	int result;
+	
+	if (!input)
+		return;
+	
+	// Don't pre-check syntax here, let parserlexer handle it properly
+	result = parserlexer(input, envp, env);
+	
+	// The exit status should already be set by parserlexer
+	// Don't override it here
 }
 
 void	cleanup_shell(t_env *env)

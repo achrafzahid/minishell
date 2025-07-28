@@ -1,45 +1,53 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amabbadi <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/14 02:06:42 by amabbadi          #+#    #+#             */
-/*   Updated: 2025/04/14 02:06:45 by amabbadi         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../minishell.h"
+
+static int is_valid_unset_identifier(const char *key)
+{
+	int i;
+
+	if (!key || !*key || (!isalpha(key[0]) && key[0] != '_'))
+		return (0);
+	i = 1;
+	while (key[i])
+	{
+		if (!isalnum(key[i]) && key[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	unset(t_env **env, char *var)
 {
-	t_env	*curr;
+	t_env	*tmp;
 	t_env	*prev;
 
-	if (!env || !*env || !var || !*var)
+	if (!env || !*env || !var)
 		return (0);
-	curr = *env;
-	prev = NULL;
-	while (curr)
+		
+	if (!is_valid_unset_identifier(var))
 	{
-		if (curr->key && ft_strcmp(curr->key, var) == 0)
+		fprintf(stderr, "minishell: unset: `%s': not a valid identifier\n", var);
+		return (1);
+	}
+
+	tmp = *env;
+	prev = NULL;
+	
+	while (tmp)
+	{
+		if (tmp->key && ft_strcmp(tmp->key, var) == 0)
 		{
 			if (prev)
-				prev->next = curr->next;
+				prev->next = tmp->next;
 			else
-				*env = curr->next;
-			free(curr->key);
-			free(curr->value);
-			free(curr);
-			if (env && *env)
-				(*env)->exit_status = 0;
+				*env = tmp->next;
+			free(tmp->key);
+			free(tmp->value);
+			free(tmp);
 			return (0);
 		}
-		prev = curr;
-		curr = curr->next;
+		prev = tmp;
+		tmp = tmp->next;
 	}
-	if (env && *env)
-		(*env)->exit_status = 0;
 	return (0);
 }
